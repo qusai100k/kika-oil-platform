@@ -99,3 +99,6 @@ The commerce foundation is implemented on `develop` at v0.4.0. Phase 5 admin and
 ## Phase 5 status update (2026-07-16)
 
 The secure admin and store-operations foundation is implemented on `develop` at v0.5.0. Phase 6 assessment work has not started. Production promotion requires explicit approval.
+## Phase 6 status update (2026-07-16)
+
+Structured assessment is implemented on `develop` at v0.6.0. Phase 7 recommendation work has not started.

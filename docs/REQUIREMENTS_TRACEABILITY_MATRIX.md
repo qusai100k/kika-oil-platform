@@ -181,3 +181,12 @@ Foundation evidence now exists for BR-001/002/009/010, FR-001/002/004, NFR-001/0
 | Order operations | transition map and payment confirmation | transition/double-confirmation tests |
 | Privacy and audit | scoped customer query and recursive audit redaction | redaction tests and audit viewer |
 | Safe content/settings | structured records and Zod allowlists | sanitization/URL/settings tests |
+# Phase 6 traceability
+
+| Requirement | Implementation | Verification |
+|---|---|---|
+| Consent and ownership | assessment service/actions | protected flow and validation tests |
+| Conditions and cleanup | pure rule engine | branch tests |
+| Immutable submission | snapshots/status/idempotency | service guards and build |
+| Safety outcomes | deterministic evaluator | ready/more-info/referral tests |
+| Sensitive admin boundary | RBAC permissions | role tests |

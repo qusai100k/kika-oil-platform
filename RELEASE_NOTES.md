@@ -2,6 +2,13 @@
 
 These notes summarize the business-facing outcome of each prototype release. They do not imply commercial launch approval or activation of future-phase services.
 
+## v0.6.0 — Structured Skin Assessment
+
+Released: 2026-07-16
+Status: Develop Preview only.
+
+Customers can consent, create and resume a structured draft, review answers, submit an immutable record, and receive a cautious deterministic state. No product is recommended. Questions and safety rules are development drafts awaiting owner, specialist, privacy, and legal approval. AI, diagnosis, booking, and Phase 7 are absent.
+
 ## v0.5.0 — Store Operations Dashboard
 
 Released: 2026-07-16

@@ -22,5 +22,31 @@ async function main(){
   ];
   for(const c of coupons)await prisma.coupon.upsert({where:{code:c.code},update:{...c,currency:"XXX",isDemo:true},create:{...c,currency:"XXX",isDemo:true}});
   await prisma.siteSetting.upsert({where:{key:"phase4_commerce_demo"},update:{value:{demo:true,currency:"XXX",shipping:25,cod:true,bankTransfer:true}},create:{key:"phase4_commerce_demo",value:{demo:true,currency:"XXX",shipping:25,cod:true,bankTransfer:true},isPublic:false}});
+  const template=await prisma.assessmentTemplate.upsert({where:{key_version:{key:"skin-guidance-demo",version:1}},update:{status:RecordStatus.ACTIVE},create:{key:"skin-guidance-demo",nameAr:"تقييم تحضير إرشاد البشرة — مبدئي",version:1,status:RecordStatus.ACTIVE,consentVersion:"assessment-demo-v1",estimatedMinutes:7,isProvisional:true,publishedAt:new Date()}});
+  const questions=[
+    ["age_group","الفئة العمرية","basic",true,["أقل من 16","16–24","25–34","35–44","45 أو أكثر"]],
+    ["after_cleansing","كيف يكون إحساس بشرتك عادة بعد التنظيف؟","characteristics",true,["مريح","مشدود أو جاف","دهني سريعًا","غير متأكدة"]],
+    ["oiliness","كيف تصفين مستوى الزيوت الظاهرة؟","characteristics",true,["قليل","متوسط","مرتفع","يتغير"]],
+    ["dryness","كيف تصفين الإحساس بالجفاف؟","characteristics",true,["لا يظهر عادة","أحيانًا","متكرر","غير متأكدة"]],
+    ["sensitivity","هل تميل بشرتك إلى التحسس من منتجات العناية؟","safety",true,["لا","أحيانًا","نعم","غير متأكدة"]],
+    ["known_allergy","هل تعرفين حساسية تجاه مكوّن عناية؟","safety",true,["لا","نعم","غير متأكدة"]],
+    ["previous_reaction","هل سبق حدوث تفاعل قوي بعد منتج عناية؟","safety",true,["لا","نعم","غير متأكدة"]],
+    ["prescription_topical","هل تستخدمين حاليًا منتجًا موضعيًا بوصفة؟","safety",true,["لا","نعم","أفضل عدم الإجابة"]],
+    ["pregnancy","هل الحمل أو الرضاعة أمر ذو صلة الآن؟","safety",true,["لا","نعم","أفضل عدم الإجابة"]],
+    ["open_wounds","هل توجد جروح مفتوحة أو حاجز جلدي متضرر بوضوح؟","screening",true,["لا","نعم"]],
+    ["severe_irritation","هل يوجد تهيج شديد أو متفاقم أو مستمر؟","screening",true,["لا","نعم"]],
+    ["suspected_infection","هل توجد علامة غير واضحة تعتقدين أنها قد تحتاج تقييمًا طبيًا؟","screening",true,["لا","نعم","غير متأكدة"]],
+    ["recent_procedure","هل أجريتِ إجراءً جلديًا مهنيًا مؤخرًا؟","screening",true,["لا","نعم"]],
+    ["cleanser","هل تستخدمين منظفًا؟","routine",false,["لا","نعم"]],
+    ["moisturizer","هل تستخدمين مرطبًا؟","routine",false,["لا","نعم"]],
+    ["sunscreen","هل تستخدمين واقي شمس؟","routine",false,["لا","أحيانًا","نعم"]],
+    ["retinoid","هل تستخدمين ريتينويد ضمن روتينك؟","actives",false,["لا","نعم","غير متأكدة"]],
+    ["exfoliating_acid","هل تستخدمين أحماض تقشير؟","actives",false,["لا","نعم","غير متأكدة"]],
+    ["vitamin_c","هل تستخدمين فيتامين C؟","actives",false,["لا","نعم","غير متأكدة"]],
+    ["main_goal","ما هدفك الأساسي من تنظيم الروتين؟","goals",true,["الترطيب","توازن الزيوت","ملمس أكثر نعومة بالمظهر","مظهر لون غير متجانس","دعم روتين عام"]],
+    ["routine_preference","أي نمط تفضلين؟","preferences",true,["روتين بسيط","روتين تفصيلي","غير متأكدة"]]
+  ] as const;
+  for(let i=0;i<questions.length;i++){const [code,text,section,required,options]=questions[i];const q=await prisma.assessmentQuestion.upsert({where:{code_version:{code,version:1}},update:{textAr:text,sectionKey:section,isRequired:required,status:RecordStatus.ACTIVE,sortOrder:i},create:{code,version:1,textAr:text,sectionKey:section,type:"SINGLE_CHOICE",isRequired:required,isSensitive:section==="safety"||section==="screening",referralRelevant:section==="screening",requiresSpecialistReview:section==="safety",status:RecordStatus.ACTIVE,sortOrder:i,helpTextAr:"سؤال تطويري مبدئي يحتاج اعتماد المالكة ومختص مؤهل."}});for(let j=0;j<options.length;j++){const label=options[j],value=`v${j}`;await prisma.assessmentOption.upsert({where:{questionId_value:{questionId:q.id,value}},update:{labelAr:label,triggersReferral:["open_wounds","severe_irritation"].includes(code)&&j===1,triggersMoreInfo:["suspected_infection","prescription_topical","pregnancy","previous_reaction"].includes(code)&&j>0},create:{questionId:q.id,value,labelAr:label,sortOrder:j,triggersReferral:["open_wounds","severe_irritation"].includes(code)&&j===1,triggersMoreInfo:["suspected_infection","prescription_topical","pregnancy","previous_reaction"].includes(code)&&j>0}})}}
+  const ruleDefs=[["Severe irritation screen","severe_irritation","REFER_TO_SPECIALIST",100],["Open wound screen","open_wounds","REFER_TO_SPECIALIST",100],["Unclear infection concern","suspected_infection","NEEDS_MORE_INFORMATION",90],["Prescription review","prescription_topical","NEEDS_MORE_INFORMATION",80],["Pregnancy ingredient review","pregnancy","NEEDS_MORE_INFORMATION",80]] as const;for(const [name,questionCode,outcome,priority] of ruleDefs){const existing=await prisma.assessmentRule.findFirst({where:{templateId:template.id,name}});if(!existing)await prisma.assessmentRule.create({data:{templateId:template.id,name,questionCode,matchValue:"v1",outcome,priority,severity:"SAFETY",customerMessageAr:outcome==="REFER_TO_SPECIALIST"?"قد يكون من الأكثر أمانًا التحدث مع مختص مؤهل قبل إرشاد المنتجات.":"قد نحتاج معلومات إضافية أو مراجعة مهنية قبل إرشاد المنتجات.",internalMessage:"DEVELOPMENT ONLY — REQUIRES SPECIALIST APPROVAL",isProvisional:true,requiresSpecialistApproval:true}})}
 }
 main().finally(()=>prisma.$disconnect());

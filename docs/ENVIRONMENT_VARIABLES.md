@@ -14,3 +14,6 @@ Phase 4 introduces no new secrets. Currency, demo shipping, tax disabled state, 
 # Phase 5 controlled role setup
 
 `ADMIN_SEED_EMAIL` and `ADMIN_SEED_ROLE` are command-scoped development inputs for `npm run admin:promote`; they are not required runtime secrets and must not be stored in Production. The script requires an existing account, never accepts a password, and refuses `VERCEL_ENV=production`. No media-provider secret was introduced.
+# Phase 6
+
+No new runtime secrets or external providers were introduced. Assessment data uses the existing Preview/Development `DATABASE_URL` only.

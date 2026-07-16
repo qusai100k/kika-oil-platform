@@ -60,3 +60,8 @@ No unknown business decision is confirmed.
 - Product removal uses archive semantics, preserving order snapshots.
 - Persistent image upload is deferred until a durable provider is approved; Vercel filesystem storage is prohibited.
 - Development roles are assigned only to pre-registered accounts through a controlled, Production-disabled script.
+## Phase 6 decisions (2026-07-16)
+
+- Deterministic safety screening only; product matching is Phase 7.
+- Published content is immutable and submission snapshots preserve history.
+- All seeded questions, rules, age handling, and retention are provisional approval gates.

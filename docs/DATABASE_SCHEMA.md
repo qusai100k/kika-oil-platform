@@ -37,3 +37,6 @@ Orders now store payment state, idempotency, tax, and immutable coupon/shipping 
 # Phase 5 admin operations update
 
 Migration `20260716173500_phase_5_admin_operations` adds catalog SEO/storage/order fields, variant stock thresholds/default ordering, provider-neutral image metadata, inventory actor/reason/note/idempotency, payment confirmer/timestamp, review moderation metadata, and structured `ContentEntry` records. Foreign keys retain actor history with `SET NULL`; commerce snapshots remain immutable.
+# Phase 6 assessment update
+
+Adds template/rule/status-history models, outcome and question-type enums, conditional and safety metadata, progress and stale-save timestamps, typed numeric/date answers, submission idempotency, and immutable JSON snapshots.

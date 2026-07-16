@@ -13,6 +13,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A phase cannot be marked complete until its changes are categorized under Added, Changed, Fixed, Security, Deprecated, or Removed.
 - When a release is approved, move Unreleased entries into a dated semantic version and update `RELEASE_NOTES.md` and `package.json` together.
 
+## [0.6.0] - 2026-07-16
+
+### Added
+
+- Versioned structured skin assessment with explicit consent, owned drafts, progress, review, immutable snapshots, history, and deletion of incomplete drafts.
+- Deterministic provisional safety outcomes: ready for future recommendation, needs more information, and refer to specialist.
+- Assessment admin overview, template/question/rule catalogs, status history, seed catalog, and privacy/safety documentation.
+
+### Security
+
+- Enforced ownership, option membership, conditional cleanup, stale-write rejection, submission replay protection, sensitive admin boundaries, and answer-free audit metadata.
+
 ## [0.5.0] - 2026-07-16
 
 ### Added

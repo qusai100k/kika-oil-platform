@@ -60,3 +60,6 @@ Every phase implementation must update `CHANGELOG.md` in the same phase commit. 
 # Phase documentation policy
 
 Every phase is committed separately on `develop`, updates `CHANGELOG.md` and `RELEASE_NOTES.md`, runs migrations only against Development, and waits for a Ready Vercel Preview. Promotion to `main` and Production always requires explicit owner approval.
+# Sensitive assessment changes
+
+Question, consent, rule, and retention changes require a new version and owner/specialist/privacy review. Published versions are never edited in place.
