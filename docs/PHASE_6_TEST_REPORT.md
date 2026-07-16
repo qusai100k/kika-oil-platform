@@ -12,3 +12,9 @@ Final executed command, migration, build, automated count, and Preview browser r
 - Vercel Preview deployment `dpl_9mwVHkzh7MnD5yxC6nfDnfW63NZ1` reached Ready with 116 output items.
 - Browser: consent was unselected by default; submitting without consent stayed on the page; accepting created an owned draft and redirected to an opaque assessment UUID with no answers in the URL.
 - Browser automation of all 21 answer groups exceeded the tool timeout, so review/submission/result/history are covered by build and rule tests but are not claimed as fully completed manual browser tests in this report.
+
+## Completion-fix verification
+
+- Added 15 shared conditional-evaluator regression tests; total is now 104/104.
+- Verified the eight-step wizard, immediate allergy detail display, immediate hide/clear after changing the parent, applicable progress, complete review/submission, and READY result on Preview.
+- A complete status-by-flow record is maintained in `PHASE_6_BROWSER_QA_MATRIX.md`; unresolved rows remain explicitly Pending.

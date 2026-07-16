@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 
 - Enforced ownership, option membership, conditional cleanup, stale-write rejection, submission replay protection, sensitive admin boundaries, and answer-free audit metadata.
+- Unified client/server conditional evaluation and added confirmation before draft deletion.
 
 ## [0.5.0] - 2026-07-16
 
