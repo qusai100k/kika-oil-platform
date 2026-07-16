@@ -1,0 +1,4 @@
+import type { Metadata } from "next";
+import { PolicyPage } from "@/components/shared/policy-page";
+export const metadata: Metadata = { title: "حدود معلومات المنتج", description: "حدود مؤقتة لمعلومات منتجات العرض دون تشخيص أو علاج أو وعود بنتائج.", alternates: { canonical: "/product-disclaimer" } };
+export default function ProductDisclaimerPage() { return <PolicyPage eyebrow="إخلاء مؤقت — يحتاج مراجعة" title="حدود معلومات المنتج" intro="المنتجات والمكونات والأسعار والتوافقات الحالية تجريبية وغير معتمدة للبيع." sections={[{ title: "لا تشخيص ولا علاج", body: "معلومات المتجر لا تشخّص حالة جلدية ولا تصف دواءً ولا تَعِد بعلاج أو نتيجة مضمونة." }, { title: "راجعي المعلومات الفعلية", body: "يجب الاطلاع على قائمة المكونات والتحذيرات وطريقة الاستخدام المعتمدة لكل منتج قبل استخدامه." }, { title: "متى تسألين مختصًا؟", body: "أي مشكلة شديدة أو مستمرة أو متفاقمة أو تفاعل مقلق يحتاج تقييم مختص مؤهل." }]} />; }

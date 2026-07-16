@@ -1,0 +1,2 @@
+Phase 1 uses CSS-generated neutral product placeholders.
+Add only owner-approved, licensed brand and product assets in a later phase.

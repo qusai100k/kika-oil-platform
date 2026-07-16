@@ -1,0 +1,4 @@
+import type { Metadata } from "next";
+import { PolicyPage } from "@/components/shared/policy-page";
+export const metadata: Metadata = { title: "حدود الاستشارة", description: "حدود خدمة الاستشارة المستقبلية غير المتاحة للحجز في هذا الإصدار.", alternates: { canonical: "/consultation-disclaimer" } };
+export default function ConsultationDisclaimerPage() { return <PolicyPage eyebrow="خدمة غير متاحة بعد" title="حدود الاستشارة" intro="لا توجد حجوزات أو ملفات مختصين فعالة في هذا الإصدار." sections={[{ title: "التحقق", body: "لن يظهر مختص للحجز قبل اعتماد آلية المؤهلات والتحقق ونطاق الخدمة." }, { title: "ليست خدمة طوارئ", body: "الخدمة المخطط لها ليست قناة للطوارئ، وصياغة الإحالة تحتاج مراجعة مهنية وقانونية." }, { title: "الموافقة والخصوصية", body: "لن تُشارك بيانات تقييم مع مختص دون موافقة صريحة ومحددة." }]} />; }

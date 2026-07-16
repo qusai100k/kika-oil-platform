@@ -1,0 +1,3 @@
+import { PageContainer } from "@/components/shared/page-container";
+export type PolicySection = { title: string; body: string };
+export function PolicyPage({ eyebrow, title, intro, sections }: { eyebrow: string; title: string; intro: string; sections: PolicySection[] }) { return <PageContainer><article className="section legal policy-page"><header><p className="eyebrow">{eyebrow}</p><h1>{title}</h1><p>{intro}</p><span className="policy-date">آخر تحديث: يُحدد بعد الاعتماد</span></header>{sections.map((section) => <section key={section.title}><h2>{section.title}</h2><p>{section.body}</p></section>)}</article></PageContainer>; }

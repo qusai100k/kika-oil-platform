@@ -1,0 +1,4 @@
+import type { Metadata } from "next";
+import { PolicyPage } from "@/components/shared/policy-page";
+export const metadata: Metadata = { title: "سياسة الشحن — مسودة", description: "مسودة غير معتمدة لسياسة الشحن، بانتظار تحديد مناطق الخدمة والرسوم والمدد.", alternates: { canonical: "/shipping" } };
+export default function ShippingPage() { return <PolicyPage eyebrow="مسودة غير معتمدة" title="سياسة الشحن" intro="لم تُحدد دولة التشغيل أو مناطق الشحن أو الناقل بعد؛ هذه الصفحة بنية محتوى وليست وعدًا بالخدمة." sections={[{ title: "المناطق المتاحة", body: "تُضاف بعد اعتماد دولة البيع والمدن أو الدول التي يمكن خدمتها." }, { title: "الرسوم والمدة", body: "لا توجد رسوم أو مواعيد افتراضية. ستظهر القيم المعتمدة بوضوح قبل أي طلب مستقبلي." }, { title: "التأخير وفشل التسليم", body: "يجب اعتماد مسار إعادة المحاولة والرسوم والعنوان الخاطئ والتلف قبل تفعيل الشحن." }]} />; }

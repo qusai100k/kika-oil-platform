@@ -1,0 +1,5 @@
+import type { Metadata } from "next";
+import { faqs } from "@/constants/content";
+import { PageContainer } from "@/components/shared/page-container";
+export const metadata: Metadata = { title: "الأسئلة الشائعة", description: "إجابات واضحة عن منتجات العرض والطلبات والدليل والاستشارات والسياسات غير المعتمدة بعد.", alternates: { canonical: "/faq" } };
+export default function FaqPage() { const groups = Array.from(new Set(faqs.map((item) => item.category))); return <PageContainer><header className="page-hero"><p className="eyebrow">كل ما هو محسوم — وما لم يُحسم</p><h1>الأسئلة الشائعة</h1><p>نجيب بوضوح، ونذكر صراحة عندما تكون السياسة أو الخدمة ما زالت قيد الاعتماد.</p></header><section className="section faq-groups">{groups.map((group) => <section key={group} aria-labelledby={`faq-${group}`}><h2 id={`faq-${group}`}>{group}</h2><div className="faq-list">{faqs.filter((item) => item.category === group).map((faq) => <details key={faq.question}><summary>{faq.question}</summary><p>{faq.answer}</p></details>)}</div></section>)}</section></PageContainer>; }

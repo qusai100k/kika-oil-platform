@@ -1,0 +1,4 @@
+import type { Metadata } from "next";
+import { PolicyPage } from "@/components/shared/policy-page";
+export const metadata: Metadata = { title: "الإرجاع والاسترداد — مسودة", description: "مسودة غير معتمدة لسياسة الإرجاع والاسترداد، تحتاج مراجعة تجارية وقانونية.", alternates: { canonical: "/returns" } };
+export default function ReturnsPage() { return <PolicyPage eyebrow="مسودة تحتاج مراجعة قانونية" title="الإرجاع والاسترداد" intro="لم تعتمد هذه السياسة، ولا ينبغي استخدامها لاتخاذ قرار شراء." sections={[{ title: "الأهلية والمدة", body: "تُحدد وفق بلد التشغيل وحالة المنتج وطبيعة العبوات بعد مراجعة مالكة المشروع والمستشار المناسب." }, { title: "المنتجات المفتوحة أو المخصصة", body: "لا نفترض إمكانية إرجاعها أو منع إرجاعها قبل حسم نموذج المنتج والقانون المنطبق." }, { title: "طريقة الاسترداد", body: "تُحدد بعد اختيار وسائل الدفع ومسؤول الموافقة والمدة التشغيلية." }]} />; }
