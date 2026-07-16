@@ -10,5 +10,6 @@
 - [x] Prisma migration on isolated Neon database
 - [x] Lint, TypeScript, tests, and production build
 - [x] Preview/Development-only database credentials
+- [x] Develop Preview registration/session/logout verified
 - [ ] External email delivery (business/provider approval required)
 - [ ] Merge to main (explicit owner approval required)
