@@ -9,3 +9,5 @@ generated/
 .DS_Store
 tmp/
 tsconfig.tsbuildinfo
+
+.vercel
