@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Noto_Kufi_Arabic, Noto_Sans_Arabic } from "next/font/google";
 import "./globals.css";
+import "./assessment-closure.css";
 import { siteConfig } from "@/config/site";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";

@@ -611,6 +611,8 @@ model Review {
 model AssessmentQuestion {
   id                       String                 @id @default(uuid()) @db.Uuid
   code                     String
+  templateId               String?                @db.Uuid
+  sectionId                String?                @db.Uuid
   version                  Int
   textAr                   String
   helpTextAr               String?
@@ -634,9 +636,13 @@ model AssessmentQuestion {
   answers                  SkinAssessmentAnswer[]
   parentQuestion           AssessmentQuestion?    @relation("QuestionCondition", fields: [parentQuestionId], references: [id], onDelete: SetNull)
   dependentQuestions       AssessmentQuestion[]   @relation("QuestionCondition")
+  template                 AssessmentTemplate?    @relation(fields: [templateId], references: [id], onDelete: Restrict)
+  section                  AssessmentSection?     @relation(fields: [sectionId], references: [id], onDelete: SetNull)
 
+  @@unique([templateId, code])
   @@unique([code, version])
   @@index([status, version, sortOrder])
+  @@index([templateId, sectionId, sortOrder])
 }
 
 model AssessmentOption {
@@ -654,28 +660,31 @@ model AssessmentOption {
 }
 
 model SkinAssessment {
-  id                   String                    @id @default(uuid()) @db.Uuid
-  userId               String                    @db.Uuid
+  id                   String                         @id @default(uuid()) @db.Uuid
+  userId               String                         @db.Uuid
   questionnaireVersion Int
-  status               AssessmentStatus          @default(DRAFT)
+  templateId           String?                        @db.Uuid
+  status               AssessmentStatus               @default(DRAFT)
   consentVersion       String?
-  currentSection       String?                   @default("introduction")
-  completionPercent    Int                       @default(0)
+  currentSection       String?                        @default("introduction")
+  completionPercent    Int                            @default(0)
   resultStatus         AssessmentOutcome?
   resultMessageAr      String?
   templateSnapshot     Json?
   answersSnapshot      Json?
-  submissionKey        String?                   @unique
+  submissionKey        String?                        @unique
   lastSavedAt          DateTime?
   submittedAt          DateTime?
   deletedAt            DateTime?
-  createdAt            DateTime                  @default(now())
-  updatedAt            DateTime                  @updatedAt
-  user                 User                      @relation(fields: [userId], references: [id], onDelete: Restrict)
+  createdAt            DateTime                       @default(now())
+  updatedAt            DateTime                       @updatedAt
+  user                 User                           @relation(fields: [userId], references: [id], onDelete: Restrict)
   answers              SkinAssessmentAnswer[]
   recommendations      Recommendation[]
   bookings             ConsultationBooking[]
   statusHistory        AssessmentStatusHistory[]
+  submissionRevisions  AssessmentSubmissionRevision[]
+  template             AssessmentTemplate?            @relation(fields: [templateId], references: [id], onDelete: Restrict)
 
   @@index([userId, createdAt])
 }
@@ -698,21 +707,40 @@ model SkinAssessmentAnswer {
 }
 
 model AssessmentTemplate {
-  id               String           @id @default(uuid()) @db.Uuid
+  id               String               @id @default(uuid()) @db.Uuid
   key              String
   nameAr           String
   version          Int
-  status           RecordStatus     @default(DRAFT)
+  status           RecordStatus         @default(DRAFT)
   consentVersion   String
-  estimatedMinutes Int              @default(7)
-  isProvisional    Boolean          @default(true)
+  estimatedMinutes Int                  @default(7)
+  isProvisional    Boolean              @default(true)
   publishedAt      DateTime?
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
   rules            AssessmentRule[]
+  sections         AssessmentSection[]
+  questions        AssessmentQuestion[]
+  assessments      SkinAssessment[]
 
   @@unique([key, version])
   @@index([status, version])
+}
+
+model AssessmentSection {
+  id            String               @id @default(uuid()) @db.Uuid
+  templateId    String               @db.Uuid
+  key           String
+  titleAr       String
+  descriptionAr String?
+  sortOrder     Int                  @default(0)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  template      AssessmentTemplate   @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  questions     AssessmentQuestion[]
+
+  @@unique([templateId, key])
+  @@index([templateId, sortOrder])
 }
 
 model AssessmentRule {
@@ -744,6 +772,21 @@ model AssessmentStatusHistory {
   assessment   SkinAssessment    @relation(fields: [assessmentId], references: [id], onDelete: Restrict)
 
   @@index([assessmentId, createdAt])
+}
+
+model AssessmentSubmissionRevision {
+  id               String            @id @default(uuid()) @db.Uuid
+  assessmentId     String            @db.Uuid
+  revision         Int
+  outcome          AssessmentOutcome
+  resultMessageAr  String
+  templateSnapshot Json
+  answersSnapshot  Json
+  submittedAt      DateTime          @default(now())
+  assessment       SkinAssessment    @relation(fields: [assessmentId], references: [id], onDelete: Restrict)
+
+  @@unique([assessmentId, revision])
+  @@index([assessmentId, submittedAt])
 }
 
 model Recommendation {
