@@ -151,3 +151,42 @@ Foundation evidence now exists for BR-001/002/009/010, FR-001/002/004, NFR-001/0
 | إتاحة | landmarks, labels, focus, live regions | مراجعة DOM ومتصفح |
 | SEO | metadata, sitemap, robots, Breadcrumb JSON-LD | build ومراجعة المصدر |
 | حدود النطاق | لا auth/cart/checkout/payment/AI/booking | مراجعة التنفيذ |
+# Phase 3 traceability
+
+| Requirement | Implementation | Verification |
+|---|---|---|
+| Register/login/logout | Better Auth API + Arabic forms | Browser + build |
+| Recovery | Better Auth expiring reset token | Architecture review |
+| Protected account | Server `requireSession` layout | Browser redirect |
+| Profile/address/security | Server actions with Zod and ownership | Browser + TypeScript |
+| Role safety | Non-input role default `CUSTOMER` | Schema/config review |
+| Isolated database | Neon Preview/Development connection | Migration + Vercel env audit |
+
+## Phase 4 traceability
+
+| Requirement | Implementation | Evidence |
+|---|---|---|
+| Persistent secure cart | User-unique Cart and owned server actions | Build + service review |
+| Safe order | Serializable transaction, snapshots, idempotency | Migration + tests |
+| Coupons | Normalization, eligibility, caps and redemption | 12 rules tests |
+| Inventory | Conditional decrement and movement ledger | Transaction review |
+| Cancellation | State gate and unique restoration movement | Rules tests + schema |
+# Phase 5 traceability update
+
+| Requirement | Implementation | Verification |
+|---|---|---|
+| Server RBAC | `authorization.ts`, admin services | RBAC tests and route redirects |
+| Catalog operations | product/variant services and routes | validation tests, Preview workflow |
+| Inventory integrity | serializable adjustment service and movement ledger | negative/zero/idempotency tests |
+| Order operations | transition map and payment confirmation | transition/double-confirmation tests |
+| Privacy and audit | scoped customer query and recursive audit redaction | redaction tests and audit viewer |
+| Safe content/settings | structured records and Zod allowlists | sanitization/URL/settings tests |
+# Phase 6 traceability
+
+| Requirement | Implementation | Verification |
+|---|---|---|
+| Consent and ownership | assessment service/actions | protected flow and validation tests |
+| Conditions and cleanup | pure rule engine | branch tests |
+| Immutable submission | snapshots/status/idempotency | service guards and build |
+| Safety outcomes | deterministic evaluator | ready/more-info/referral tests |
+| Sensitive admin boundary | RBAC permissions | role tests |

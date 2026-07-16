@@ -48,6 +48,40 @@ enum OrderStatus {
   REFUNDED
 }
 
+enum PaymentMethod {
+  CASH_ON_DELIVERY
+  MANUAL_BANK_TRANSFER
+}
+
+enum PaymentStatus {
+  PENDING
+  AWAITING_TRANSFER
+  PAYMENT_REVIEW
+  NOT_REQUIRED
+  PAID
+  CANCELLED
+}
+
+enum CouponType {
+  FIXED
+  PERCENTAGE
+}
+
+enum InventoryMovementType {
+  ORDER_DECREMENT
+  CANCELLATION_RESTORE
+  MANUAL_ADJUSTMENT
+  RESTOCK
+  DAMAGE
+  CORRECTION
+}
+
+enum CancellationRequestStatus {
+  REQUESTED
+  APPROVED
+  REJECTED
+}
+
 enum ReviewStatus {
   PENDING
   APPROVED
@@ -59,6 +93,8 @@ enum AssessmentStatus {
   SUBMITTED
   REFERRED
   COMPLETED
+  NEEDS_MORE_INFORMATION
+  READY_FOR_FUTURE_RECOMMENDATION
 }
 
 enum RecommendationStatus {
@@ -99,64 +135,99 @@ enum QuestionType {
   MULTIPLE_CHOICE
   SHORT_TEXT
   BOOLEAN
+  YES_NO
+  LONG_TEXT
+  NUMBER
+  DATE
+  INFORMATIONAL
   CONSENT
 }
 
+enum AssessmentOutcome {
+  CONTINUE
+  NEEDS_MORE_INFORMATION
+  REFER_TO_SPECIALIST
+  BLOCK_PRODUCT_RECOMMENDATION
+  SHOW_SAFETY_NOTICE
+  READY_FOR_FUTURE_RECOMMENDATION
+}
+
 model User {
-  id                String                @id @default(uuid()) @db.Uuid
-  email             String                @unique
-  emailVerifiedAt   DateTime?
-  name              String?
-  role              UserRole              @default(CUSTOMER)
-  imageUrl          String?
-  deletedAt         DateTime?
-  createdAt         DateTime              @default(now())
-  updatedAt         DateTime              @updatedAt
-  accounts          Account[]
-  sessions          Session[]
-  customerProfile   CustomerProfile?
-  addresses         Address[]
-  cart              Cart?
-  orders            Order[]
-  reviews           Review[]
-  assessments       SkinAssessment[]
-  recommendations   Recommendation[]
-  specialistProfile SpecialistProfile?
-  bookings          ConsultationBooking[] @relation("CustomerBookings")
-  notifications     Notification[]
-  consents          ConsentRecord[]
-  auditEvents       AuditLog[]            @relation("AuditActor")
+  id                   String                     @id @default(uuid()) @db.Uuid
+  email                String                     @unique
+  emailVerified        Boolean                    @default(false)
+  name                 String?
+  role                 UserRole                   @default(CUSTOMER)
+  image                String?
+  deletedAt            DateTime?
+  createdAt            DateTime                   @default(now())
+  updatedAt            DateTime                   @updatedAt
+  accounts             Account[]
+  sessions             Session[]
+  customerProfile      CustomerProfile?
+  addresses            Address[]
+  cart                 Cart?
+  orders               Order[]
+  reviews              Review[]
+  assessments          SkinAssessment[]
+  recommendations      Recommendation[]
+  specialistProfile    SpecialistProfile?
+  bookings             ConsultationBooking[]      @relation("CustomerBookings")
+  notifications        Notification[]
+  consents             ConsentRecord[]
+  auditEvents          AuditLog[]                 @relation("AuditActor")
+  couponRedemptions    CouponRedemption[]
+  cancellationRequests OrderCancellationRequest[]
+  inventoryAdjustments InventoryMovement[]        @relation("InventoryActor")
+  moderatedReviews     Review[]                   @relation("ReviewModerator")
+  confirmedPayments    Order[]                    @relation("PaymentConfirmer")
 
   @@index([role, deletedAt])
 }
 
 model Account {
-  id                String   @id @default(uuid()) @db.Uuid
-  userId            String   @db.Uuid
-  provider          String
-  providerAccountId String
-  type              String
-  accessToken       String?
-  refreshToken      String?
-  expiresAt         Int?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                    String    @id @default(uuid()) @db.Uuid
+  userId                String    @db.Uuid
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerAccountId])
+  @@unique([providerId, accountId])
   @@index([userId])
 }
 
 model Session {
-  id           String   @id @default(uuid()) @db.Uuid
-  sessionToken String   @unique
-  userId       String   @db.Uuid
-  expiresAt    DateTime
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(uuid()) @db.Uuid
+  token     String   @unique
+  userId    String   @db.Uuid
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, expiresAt])
+}
+
+model Verification {
+  id         String   @id @default(uuid()) @db.Uuid
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
 }
 
 model CustomerProfile {
@@ -179,7 +250,9 @@ model Address {
   city        String
   area        String?
   street      String
+  building    String?
   postalCode  String?
+  notes       String?
   isDefault   Boolean   @default(false)
   deletedAt   DateTime?
   createdAt   DateTime  @default(now())
@@ -203,60 +276,72 @@ model ProductCategory {
 }
 
 model Product {
-  id                  String                     @id @default(uuid()) @db.Uuid
-  categoryId          String                     @db.Uuid
-  slug                String                     @unique
-  nameAr              String
-  shortDescriptionAr  String?
-  descriptionAr       String?
-  usageAr             String?
-  safetyNoticeAr      String?
-  status              ProductStatus              @default(DRAFT)
-  isFeatured          Boolean                    @default(false)
-  deletedAt           DateTime?
-  createdAt           DateTime                   @default(now())
-  updatedAt           DateTime                   @updatedAt
-  category            ProductCategory            @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  variants            ProductVariant[]
-  images              ProductImage[]
-  ingredients         ProductIngredient[]
-  skinCompatibility   ProductSkinCompatibility[]
-  concernMappings     ProductConcernMapping[]
-  recommendationItems RecommendationItem[]
-  reviews             Review[]
+  id                    String                     @id @default(uuid()) @db.Uuid
+  categoryId            String                     @db.Uuid
+  slug                  String                     @unique
+  nameAr                String
+  shortDescriptionAr    String?
+  descriptionAr         String?
+  usageAr               String?
+  safetyNoticeAr        String?
+  storageInstructionsAr String?
+  seoTitleAr            String?
+  seoDescriptionAr      String?
+  sortOrder             Int                        @default(0)
+  status                ProductStatus              @default(DRAFT)
+  isFeatured            Boolean                    @default(false)
+  deletedAt             DateTime?
+  createdAt             DateTime                   @default(now())
+  updatedAt             DateTime                   @updatedAt
+  category              ProductCategory            @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  variants              ProductVariant[]
+  images                ProductImage[]
+  ingredients           ProductIngredient[]
+  skinCompatibility     ProductSkinCompatibility[]
+  concernMappings       ProductConcernMapping[]
+  recommendationItems   RecommendationItem[]
+  reviews               Review[]
 
   @@index([categoryId, status, deletedAt])
 }
 
 model ProductVariant {
-  id         String      @id @default(uuid()) @db.Uuid
-  productId  String      @db.Uuid
-  sku        String      @unique
-  nameAr     String
-  sizeLabel  String?
-  price      Decimal     @db.Decimal(12, 2)
-  currency   String      @db.VarChar(3)
-  stock      Int         @default(0)
-  isActive   Boolean     @default(true)
-  deletedAt  DateTime?
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  product    Product     @relation(fields: [productId], references: [id], onDelete: Restrict)
-  cartItems  CartItem[]
-  orderItems OrderItem[]
+  id                 String              @id @default(uuid()) @db.Uuid
+  productId          String              @db.Uuid
+  sku                String              @unique
+  nameAr             String
+  sizeLabel          String?
+  price              Decimal             @db.Decimal(12, 2)
+  currency           String              @db.VarChar(3)
+  stock              Int                 @default(0)
+  lowStockThreshold  Int                 @default(3)
+  sortOrder          Int                 @default(0)
+  isDefault          Boolean             @default(false)
+  isActive           Boolean             @default(true)
+  deletedAt          DateTime?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  product            Product             @relation(fields: [productId], references: [id], onDelete: Restrict)
+  cartItems          CartItem[]
+  orderItems         OrderItem[]
+  inventoryMovements InventoryMovement[]
 
   @@index([productId, isActive, deletedAt])
 }
 
 model ProductImage {
-  id        String   @id @default(uuid()) @db.Uuid
-  productId String   @db.Uuid
-  url       String
-  altAr     String
-  sortOrder Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  id         String   @id @default(uuid()) @db.Uuid
+  productId  String   @db.Uuid
+  url        String
+  altAr      String
+  sortOrder  Int      @default(0)
+  isPrimary  Boolean  @default(false)
+  mimeType   String?
+  fileSize   Int?
+  storageKey String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([productId, sortOrder])
 }
@@ -267,6 +352,7 @@ model Ingredient {
   nameAr        String
   descriptionAr String?
   isDemo        Boolean             @default(true)
+  isActive      Boolean             @default(true)
   createdAt     DateTime            @default(now())
   updatedAt     DateTime            @updatedAt
   products      ProductIngredient[]
@@ -288,6 +374,7 @@ model SkinType {
   slug          String                     @unique
   nameAr        String
   isDemo        Boolean                    @default(true)
+  isActive      Boolean                    @default(true)
   compatibility ProductSkinCompatibility[]
 }
 
@@ -296,6 +383,7 @@ model SkinConcern {
   slug            String                  @unique
   nameAr          String
   isDemo          Boolean                 @default(true)
+  isActive        Boolean                 @default(true)
   productMappings ProductConcernMapping[]
 }
 
@@ -342,23 +430,41 @@ model CartItem {
 }
 
 model Order {
-  id                      String      @id @default(uuid()) @db.Uuid
-  reference               String      @unique
-  userId                  String      @db.Uuid
-  status                  OrderStatus @default(PENDING_PAYMENT)
-  currency                String      @db.VarChar(3)
-  subtotal                Decimal     @db.Decimal(12, 2)
-  discountTotal           Decimal     @default(0) @db.Decimal(12, 2)
-  shippingTotal           Decimal     @default(0) @db.Decimal(12, 2)
-  total                   Decimal     @db.Decimal(12, 2)
+  id                      String                    @id @default(uuid()) @db.Uuid
+  reference               String                    @unique
+  userId                  String                    @db.Uuid
+  status                  OrderStatus               @default(PENDING_PAYMENT)
+  currency                String                    @db.VarChar(3)
+  subtotal                Decimal                   @db.Decimal(12, 2)
+  discountTotal           Decimal                   @default(0) @db.Decimal(12, 2)
+  shippingTotal           Decimal                   @default(0) @db.Decimal(12, 2)
+  taxTotal                Decimal                   @default(0) @db.Decimal(12, 2)
+  total                   Decimal                   @db.Decimal(12, 2)
   shippingAddressSnapshot Json
-  couponId                String?     @db.Uuid
-  createdAt               DateTime    @default(now())
-  updatedAt               DateTime    @updatedAt
-  user                    User        @relation(fields: [userId], references: [id], onDelete: Restrict)
-  coupon                  Coupon?     @relation(fields: [couponId], references: [id], onDelete: SetNull)
+  shippingMethodSnapshot  Json
+  couponSnapshot          Json?
+  paymentMethod           PaymentMethod
+  paymentStatus           PaymentStatus             @default(PENDING)
+  paymentReference        String?
+  customerNotes           String?
+  internalNote            String?
+  shippingReference       String?
+  paymentConfirmedAt      DateTime?
+  paymentConfirmedById    String?                   @db.Uuid
+  idempotencyKey          String                    @unique
+  couponId                String?                   @db.Uuid
+  cancelledAt             DateTime?
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime                  @updatedAt
+  user                    User                      @relation(fields: [userId], references: [id], onDelete: Restrict)
+  coupon                  Coupon?                   @relation(fields: [couponId], references: [id], onDelete: SetNull)
   items                   OrderItem[]
   reviews                 Review[]
+  statusHistory           OrderStatusHistory[]
+  couponRedemption        CouponRedemption?
+  inventoryMovements      InventoryMovement[]
+  cancellationRequest     OrderCancellationRequest?
+  paymentConfirmedBy      User?                     @relation("PaymentConfirmer", fields: [paymentConfirmedById], references: [id], onDelete: SetNull)
 
   @@index([userId, createdAt])
   @@index([status, createdAt])
@@ -370,6 +476,10 @@ model OrderItem {
   variantId     String?         @db.Uuid
   productNameAr String
   variantNameAr String?
+  productSlug   String
+  sizeLabel     String?
+  imageUrl      String?
+  currency      String          @db.VarChar(3)
   sku           String
   quantity      Int
   unitPrice     Decimal         @db.Decimal(12, 2)
@@ -382,85 +492,199 @@ model OrderItem {
 }
 
 model Coupon {
-  id         String    @id @default(uuid()) @db.Uuid
-  code       String    @unique
-  amount     Decimal   @db.Decimal(12, 2)
-  currency   String?   @db.VarChar(3)
-  startsAt   DateTime?
-  endsAt     DateTime?
-  usageLimit Int?
-  isActive   Boolean   @default(false)
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  orders     Order[]
+  id               String             @id @default(uuid()) @db.Uuid
+  code             String             @unique
+  type             CouponType         @default(FIXED)
+  value            Decimal            @db.Decimal(12, 2)
+  currency         String?            @db.VarChar(3)
+  minimumSubtotal  Decimal?           @db.Decimal(12, 2)
+  maximumDiscount  Decimal?           @db.Decimal(12, 2)
+  startsAt         DateTime?
+  endsAt           DateTime?
+  usageLimit       Int?
+  perCustomerLimit Int                @default(1)
+  usageCount       Int                @default(0)
+  isDemo           Boolean            @default(true)
+  isActive         Boolean            @default(false)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  orders           Order[]
+  redemptions      CouponRedemption[]
+}
+
+model CouponRedemption {
+  id        String   @id @default(uuid()) @db.Uuid
+  couponId  String   @db.Uuid
+  userId    String   @db.Uuid
+  orderId   String   @unique @db.Uuid
+  amount    Decimal  @db.Decimal(12, 2)
+  createdAt DateTime @default(now())
+  coupon    Coupon   @relation(fields: [couponId], references: [id], onDelete: Restrict)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Restrict)
+
+  @@index([couponId, userId, createdAt])
+}
+
+model OrderStatusHistory {
+  id         String       @id @default(uuid()) @db.Uuid
+  orderId    String       @db.Uuid
+  fromStatus OrderStatus?
+  toStatus   OrderStatus
+  noteAr     String?
+  createdAt  DateTime     @default(now())
+  order      Order        @relation(fields: [orderId], references: [id], onDelete: Restrict)
+
+  @@index([orderId, createdAt])
+}
+
+model InventoryMovement {
+  id             String                @id @default(uuid()) @db.Uuid
+  variantId      String                @db.Uuid
+  orderId        String?               @db.Uuid
+  type           InventoryMovementType
+  quantity       Int
+  balanceAfter   Int
+  actorUserId    String?               @db.Uuid
+  reason         String?
+  note           String?
+  idempotencyKey String?               @unique
+  createdAt      DateTime              @default(now())
+  variant        ProductVariant        @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  order          Order?                @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  actor          User?                 @relation("InventoryActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@unique([orderId, variantId, type])
+  @@index([variantId, createdAt])
+}
+
+model OrderCancellationRequest {
+  id        String                    @id @default(uuid()) @db.Uuid
+  orderId   String                    @unique @db.Uuid
+  userId    String                    @db.Uuid
+  reason    String
+  status    CancellationRequestStatus @default(APPROVED)
+  createdAt DateTime                  @default(now())
+  updatedAt DateTime                  @updatedAt
+  order     Order                     @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  user      User                      @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([userId, createdAt])
+}
+
+model CheckoutAttempt {
+  id             String    @id @default(uuid()) @db.Uuid
+  userId         String    @db.Uuid
+  idempotencyKey String    @unique
+  orderId        String?   @unique @db.Uuid
+  createdAt      DateTime  @default(now())
+  completedAt    DateTime?
+
+  @@index([userId, createdAt])
 }
 
 model Review {
-  id          String       @id @default(uuid()) @db.Uuid
-  userId      String       @db.Uuid
-  productId   String       @db.Uuid
-  orderId     String       @db.Uuid
-  orderItemId String?      @db.Uuid
-  rating      Int
-  title       String?
-  body        String?
-  status      ReviewStatus @default(PENDING)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  user        User         @relation(fields: [userId], references: [id], onDelete: Restrict)
-  product     Product      @relation(fields: [productId], references: [id], onDelete: Restrict)
-  order       Order        @relation(fields: [orderId], references: [id], onDelete: Restrict)
-  orderItem   OrderItem?   @relation(fields: [orderItemId], references: [id], onDelete: SetNull)
+  id               String       @id @default(uuid()) @db.Uuid
+  userId           String       @db.Uuid
+  productId        String       @db.Uuid
+  orderId          String       @db.Uuid
+  orderItemId      String?      @db.Uuid
+  rating           Int
+  title            String?
+  body             String?
+  status           ReviewStatus @default(PENDING)
+  moderationReason String?
+  moderatedAt      DateTime?
+  moderatedById    String?      @db.Uuid
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  user             User         @relation(fields: [userId], references: [id], onDelete: Restrict)
+  product          Product      @relation(fields: [productId], references: [id], onDelete: Restrict)
+  order            Order        @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  orderItem        OrderItem?   @relation(fields: [orderItemId], references: [id], onDelete: SetNull)
+  moderatedBy      User?        @relation("ReviewModerator", fields: [moderatedById], references: [id], onDelete: SetNull)
 
   @@unique([userId, orderId, productId])
   @@index([productId, status])
 }
 
 model AssessmentQuestion {
-  id          String                 @id @default(uuid()) @db.Uuid
-  code        String
-  version     Int
-  textAr      String
-  type        QuestionType
-  isRequired  Boolean                @default(false)
-  isSensitive Boolean                @default(true)
-  status      RecordStatus           @default(DRAFT)
-  sortOrder   Int                    @default(0)
-  createdAt   DateTime               @default(now())
-  updatedAt   DateTime               @updatedAt
-  options     AssessmentOption[]
-  answers     SkinAssessmentAnswer[]
+  id                       String                 @id @default(uuid()) @db.Uuid
+  code                     String
+  templateId               String?                @db.Uuid
+  sectionId                String?                @db.Uuid
+  version                  Int
+  textAr                   String
+  helpTextAr               String?
+  internalNotes            String?
+  sectionKey               String                 @default("general")
+  type                     QuestionType
+  isRequired               Boolean                @default(false)
+  isSensitive              Boolean                @default(true)
+  referralRelevant         Boolean                @default(false)
+  requiresSpecialistReview Boolean                @default(false)
+  parentQuestionId         String?                @db.Uuid
+  showWhenValue            String?
+  minValue                 Int?
+  maxValue                 Int?
+  maxLength                Int?
+  status                   RecordStatus           @default(DRAFT)
+  sortOrder                Int                    @default(0)
+  createdAt                DateTime               @default(now())
+  updatedAt                DateTime               @updatedAt
+  options                  AssessmentOption[]
+  answers                  SkinAssessmentAnswer[]
+  parentQuestion           AssessmentQuestion?    @relation("QuestionCondition", fields: [parentQuestionId], references: [id], onDelete: SetNull)
+  dependentQuestions       AssessmentQuestion[]   @relation("QuestionCondition")
+  template                 AssessmentTemplate?    @relation(fields: [templateId], references: [id], onDelete: Restrict)
+  section                  AssessmentSection?     @relation(fields: [sectionId], references: [id], onDelete: SetNull)
 
+  @@unique([templateId, code])
   @@unique([code, version])
   @@index([status, version, sortOrder])
+  @@index([templateId, sectionId, sortOrder])
 }
 
 model AssessmentOption {
-  id         String                 @id @default(uuid()) @db.Uuid
-  questionId String                 @db.Uuid
-  value      String
-  labelAr    String
-  sortOrder  Int                    @default(0)
-  question   AssessmentQuestion     @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  answers    SkinAssessmentAnswer[]
+  id               String                 @id @default(uuid()) @db.Uuid
+  questionId       String                 @db.Uuid
+  value            String
+  labelAr          String
+  sortOrder        Int                    @default(0)
+  triggersReferral Boolean                @default(false)
+  triggersMoreInfo Boolean                @default(false)
+  question         AssessmentQuestion     @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  answers          SkinAssessmentAnswer[]
 
   @@unique([questionId, value])
 }
 
 model SkinAssessment {
-  id                   String                 @id @default(uuid()) @db.Uuid
-  userId               String                 @db.Uuid
+  id                   String                         @id @default(uuid()) @db.Uuid
+  userId               String                         @db.Uuid
   questionnaireVersion Int
-  status               AssessmentStatus       @default(DRAFT)
+  templateId           String?                        @db.Uuid
+  status               AssessmentStatus               @default(DRAFT)
   consentVersion       String?
+  currentSection       String?                        @default("introduction")
+  completionPercent    Int                            @default(0)
+  resultStatus         AssessmentOutcome?
+  resultMessageAr      String?
+  templateSnapshot     Json?
+  answersSnapshot      Json?
+  submissionKey        String?                        @unique
+  lastSavedAt          DateTime?
   submittedAt          DateTime?
   deletedAt            DateTime?
-  createdAt            DateTime               @default(now())
-  updatedAt            DateTime               @updatedAt
-  user                 User                   @relation(fields: [userId], references: [id], onDelete: Restrict)
+  createdAt            DateTime                       @default(now())
+  updatedAt            DateTime                       @updatedAt
+  user                 User                           @relation(fields: [userId], references: [id], onDelete: Restrict)
   answers              SkinAssessmentAnswer[]
   recommendations      Recommendation[]
   bookings             ConsultationBooking[]
+  statusHistory        AssessmentStatusHistory[]
+  submissionRevisions  AssessmentSubmissionRevision[]
+  template             AssessmentTemplate?            @relation(fields: [templateId], references: [id], onDelete: Restrict)
 
   @@index([userId, createdAt])
 }
@@ -472,12 +696,97 @@ model SkinAssessmentAnswer {
   optionId     String?            @db.Uuid
   valueText    String?
   valueBoolean Boolean?
+  valueNumber  Decimal?           @db.Decimal(12, 2)
+  valueDate    DateTime?
   createdAt    DateTime           @default(now())
   assessment   SkinAssessment     @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
   question     AssessmentQuestion @relation(fields: [questionId], references: [id], onDelete: Restrict)
   option       AssessmentOption?  @relation(fields: [optionId], references: [id], onDelete: Restrict)
 
   @@index([assessmentId, questionId])
+}
+
+model AssessmentTemplate {
+  id               String               @id @default(uuid()) @db.Uuid
+  key              String
+  nameAr           String
+  version          Int
+  status           RecordStatus         @default(DRAFT)
+  consentVersion   String
+  estimatedMinutes Int                  @default(7)
+  isProvisional    Boolean              @default(true)
+  publishedAt      DateTime?
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  rules            AssessmentRule[]
+  sections         AssessmentSection[]
+  questions        AssessmentQuestion[]
+  assessments      SkinAssessment[]
+
+  @@unique([key, version])
+  @@index([status, version])
+}
+
+model AssessmentSection {
+  id            String               @id @default(uuid()) @db.Uuid
+  templateId    String               @db.Uuid
+  key           String
+  titleAr       String
+  descriptionAr String?
+  sortOrder     Int                  @default(0)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  template      AssessmentTemplate   @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  questions     AssessmentQuestion[]
+
+  @@unique([templateId, key])
+  @@index([templateId, sortOrder])
+}
+
+model AssessmentRule {
+  id                         String             @id @default(uuid()) @db.Uuid
+  templateId                 String             @db.Uuid
+  name                       String
+  questionCode               String
+  matchValue                 String?
+  outcome                    AssessmentOutcome
+  priority                   Int                @default(0)
+  severity                   String             @default("NOTICE")
+  customerMessageAr          String
+  internalMessage            String?
+  isActive                   Boolean            @default(true)
+  isProvisional              Boolean            @default(true)
+  requiresSpecialistApproval Boolean            @default(true)
+  template                   AssessmentTemplate @relation(fields: [templateId], references: [id], onDelete: Restrict)
+
+  @@index([templateId, isActive, priority])
+}
+
+model AssessmentStatusHistory {
+  id           String            @id @default(uuid()) @db.Uuid
+  assessmentId String            @db.Uuid
+  fromStatus   AssessmentStatus?
+  toStatus     AssessmentStatus
+  noteAr       String?
+  createdAt    DateTime          @default(now())
+  assessment   SkinAssessment    @relation(fields: [assessmentId], references: [id], onDelete: Restrict)
+
+  @@index([assessmentId, createdAt])
+}
+
+model AssessmentSubmissionRevision {
+  id               String            @id @default(uuid()) @db.Uuid
+  assessmentId     String            @db.Uuid
+  revision         Int
+  outcome          AssessmentOutcome
+  resultMessageAr  String
+  templateSnapshot Json
+  answersSnapshot  Json
+  submittedAt      DateTime          @default(now())
+  assessment       SkinAssessment    @relation(fields: [assessmentId], references: [id], onDelete: Restrict)
+
+  @@unique([assessmentId, revision])
+  @@index([assessmentId, submittedAt])
 }
 
 model Recommendation {
@@ -643,4 +952,19 @@ model SiteSetting {
   isPublic  Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model ContentEntry {
+  id        String       @id @default(uuid()) @db.Uuid
+  key       String       @unique
+  type      String
+  titleAr   String?
+  bodyAr    String?
+  url       String?
+  status    RecordStatus @default(DRAFT)
+  sortOrder Int          @default(0)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@index([type, status, sortOrder])
 }

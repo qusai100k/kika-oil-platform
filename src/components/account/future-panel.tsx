@@ -1,0 +1,1 @@
+export function FuturePanel({title,phase}:{title:string;phase:string}){return <div className="future-account"><span>{phase}</span><h2>{title}</h2><p>هذا القسم مؤمّن داخل حسابك وسيصبح نشطًا في مرحلته المخصصة. لا توجد بيانات تجريبية توحي بأن الخدمة تعمل الآن.</p></div>}

@@ -88,3 +88,17 @@
 # تحديث حالة خارطة الطريق — 2026-07-16
 
 المرحلة الثانية (Brand Design and Public Storefront) منفذة وظيفيًا وبصريًا، مع بقاء اعتماد المحتوى والأصول، مرور لوحة مفاتيح يدوي كامل، وبيانات PostgreSQL المحلية كمتابعات معلنة. لم تبدأ المرحلة الثالثة.
+# Phase 3 status update (2026-07-16)
+
+Authentication and the customer-account foundation were completed on `develop`; the Phase 4 status is recorded below. Promotion to `main` requires explicit owner approval after Preview acceptance.
+
+## Phase 4 status update (2026-07-16)
+
+The commerce foundation is implemented on `develop` at v0.4.0. Phase 5 admin and fulfillment tooling remains unstarted. Production promotion requires explicit approval.
+
+## Phase 5 status update (2026-07-16)
+
+The secure admin and store-operations foundation is implemented on `develop` at v0.5.0. Phase 6 assessment work has not started. Production promotion requires explicit approval.
+## Phase 6 status update (2026-07-16)
+
+Structured assessment is implemented on `develop` at v0.6.0. Phase 7 recommendation work has not started.

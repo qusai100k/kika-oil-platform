@@ -41,3 +41,27 @@ No unknown business decision is confirmed.
 - استخدام صور محلية مولدة بدل أصول Instagram أو صور عملاء.
 - عدم نشر Product structured data لأن البيانات والأسعار غير معتمدة؛ الاكتفاء بـBreadcrumb.
 - التواصل محلي فقط، مع رسالة صريحة بعدم الإرسال.
+# Phase 3 decisions (2026-07-16)
+
+- Better Auth 1.6.23 selected to avoid a second session system and retain server-side session validation.
+- Neon free PostgreSQL selected for isolated Preview/Development data; Production credentials remain untouched.
+- Email transport remains provider-neutral pending business approval; no token is exposed in public UI or Preview logs.
+- Public registrations are always `CUSTOMER`; dashboards for staff remain outside Phase 3.
+
+## Phase 4 decisions (2026-07-16)
+
+- `XXX`, shipping `25`, COD, and manual transfer are development-only configuration, not approved commercial terms.
+- Serializable transactions plus conditional variant updates prevent overselling.
+- Customer cancellation is limited to pre-fulfillment states; refund execution and staff confirmation remain Phase 5.
+
+## Phase 5 decisions (2026-07-16)
+
+- Permissions are centralized and enforced on the server; navigation filtering is convenience only.
+- Product removal uses archive semantics, preserving order snapshots.
+- Persistent image upload is deferred until a durable provider is approved; Vercel filesystem storage is prohibited.
+- Development roles are assigned only to pre-registered accounts through a controlled, Production-disabled script.
+## Phase 6 decisions (2026-07-16)
+
+- Deterministic safety screening only; product matching is Phase 7.
+- Published content is immutable and submission snapshots preserve history.
+- All seeded questions, rules, age handling, and retention are provisional approval gates.
