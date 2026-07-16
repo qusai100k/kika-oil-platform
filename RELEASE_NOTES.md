@@ -9,6 +9,8 @@ Status: Develop Preview only.
 
 Customers can consent, create and resume a structured draft, review answers, submit an immutable record, and receive a cautious deterministic state. No product is recommended. Questions and safety rules are development drafts awaiting owner, specialist, privacy, and legal approval. AI, diagnosis, booking, and Phase 7 are absent.
 
+Closure verification completed the referral, needs-more-information correction, logout/login resume, cross-user access, stale-tab, sensitive admin view, template versioning, and responsive admin checks. The Preview now includes fixes for correction routing, mobile overflow, and reliable template duplication on Neon.
+
 ## v0.5.0 — Store Operations Dashboard
 
 Released: 2026-07-16

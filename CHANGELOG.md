@@ -26,6 +26,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enforced ownership, option membership, conditional cleanup, stale-write rejection, submission replay protection, sensitive admin boundaries, and answer-free audit metadata.
 - Unified client/server conditional evaluation and added confirmation before draft deletion.
 
+### Fixed
+
+- Routed needs-more-information corrections back into the relevant section on the same assessment while preserving the previous submission revision.
+- Fixed mobile overflow on assessment history and assessment admin pages.
+- Fixed assessment-template duplication so copied options belong to copied questions, and increased the duplication transaction timeout for realistic Preview latency.
+- Verified and documented referral, correction, resume, cross-user IDOR, stale-tab, sensitive-view audit, and `ORDER_MANAGER` denial paths.
+
 ## [0.5.0] - 2026-07-16
 
 ### Added
@@ -137,7 +144,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added environment-variable boundaries, server-only database access, role definitions, ownership helpers, and audit-log schema foundations.
 
-[Unreleased]: https://github.com/qusai100k/kika-oil-platform/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/qusai100k/kika-oil-platform/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/qusai100k/kika-oil-platform/compare/v0.5.0...v0.6.0
+[0.5.0]: https://github.com/qusai100k/kika-oil-platform/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/qusai100k/kika-oil-platform/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/qusai100k/kika-oil-platform/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/qusai100k/kika-oil-platform/compare/v0.1.0...v0.2.0

@@ -1,20 +1,39 @@
 # Phase 6 Test Report
 
-Final executed command, migration, build, automated count, and Preview browser results are appended after verification. Coverage includes conditions, hidden-answer cleanup, required/option validation, progress, safety outcomes, safe wording, and admin boundaries.
+Final closure verification was completed on 2026-07-16 on the `develop` branch only. Production and `main` were not modified.
 
-## Executed results
+## Automated Verification
 
-- ESLint passed with zero warnings; TypeScript passed.
-- Vitest passed: 89/89 tests across five files, including 26 new Phase 6 tests.
-- Prisma format, validate, generate, both Development migrations, seed, and data integrity counts passed.
-- Seed integrity: 21 active questions, one provisional published template, five provisional rules.
-- Next.js production build passed with 56 routes.
-- Vercel Preview deployment `dpl_9mwVHkzh7MnD5yxC6nfDnfW63NZ1` reached Ready with 116 output items.
-- Browser: consent was unselected by default; submitting without consent stayed on the page; accepting created an owned draft and redirected to an opaque assessment UUID with no answers in the URL.
-- Browser automation of all 21 answer groups exceeded the tool timeout, so review/submission/result/history are covered by build and rule tests but are not claimed as fully completed manual browser tests in this report.
+- `npm install` passed. npm audit still reports 6 transitive issues: 1 low and 5 moderate. No forced dependency upgrade was applied.
+- `npm run lint` passed with zero warnings.
+- `npm run typecheck` passed.
+- `npm test` passed: 123 tests across 7 files.
+- `npm run prisma:format`, `npm run prisma:validate`, and `npm run prisma:generate` passed.
+- `npm run build` passed with 56 Next.js routes.
+- Vercel Preview deployment reached Ready.
 
-## Completion-fix verification
+## Browser and Production-Mode Verification
 
-- Added 15 shared conditional-evaluator regression tests; total is now 104/104.
-- Verified the eight-step wizard, immediate allergy detail display, immediate hide/clear after changing the parent, applicable progress, complete review/submission, and READY result on Preview.
-- A complete status-by-flow record is maintained in `PHASE_6_BROWSER_QA_MATRIX.md`; unresolved rows remain explicitly Pending.
+- Referral path: submitted a severe-condition scenario and verified safe referral wording, no diagnosis, no treatment claim, no product or oil recommendation, immutable result, and account history visibility.
+- Needs-more-information path: submitted an uncertainty scenario, reopened the same assessment for correction, redirected into the relevant section, preserved the first submission revision, corrected the answer, and resubmitted the same assessment to a ready state.
+- Resume path: saved a draft, logged out and back in, resumed the same assessment, and confirmed the saved answer and progress persisted.
+- IDOR path: User B could not read, save, delete, or view User A's draft/result. Direct service mutation attempts returned `ASSESSMENT_NOT_FOUND` and did not mutate data.
+- Stale-write path: a simulated second-tab update caused the older browser save to be rejected with the stale notice and preserved the newer answer.
+- Admin template operations: duplicated active template v2 into draft v3, verified 25 questions and 68 options copied with zero bad option links, validated successfully, confirmed `ORDER_MANAGER` denial, and archived the QA copy and old v1.
+- Sensitive admin view: verified the warning, structured answer display, no answers in the URL, and audit metadata limited to actor, purpose, status, and answer count.
+- Responsive QA: 48 browser checks across 8 viewport sizes and 6 Phase 6 page types. A mobile admin overflow was found, fixed, redeployed, and rechecked at 320, 375, and 390 widths.
+- Keyboard/accessibility: verified radio keyboard selection, focus movement to the next step heading, validation focus on missing required answers, delete-draft dialog focus placement, Escape close, and focus return.
+
+## Fixes Made During Closure
+
+- Fixed needs-more-information correction routing so the reopened draft starts at the relevant section.
+- Added responsive overflow containment for assessment history and admin assessment pages.
+- Fixed assessment template duplication so copied options belong to the copied questions instead of source questions.
+- Increased the template-duplication transaction timeout for realistic Neon Preview latency.
+- Archived the superseded development template v1 while preserving historical assessment snapshots.
+
+## Remaining Limitations
+
+- Assessment questions, rules, retention wording, and safety copy still require owner, specialist, privacy, and legal approval.
+- No AI, product recommendation, specialist booking, diagnosis, treatment guidance, or Phase 7 functionality exists in Phase 6.
+- Browser screen-reader output was not tested with a real assistive technology runtime; semantic markup, focus behavior, labels, and ARIA behavior were checked.
