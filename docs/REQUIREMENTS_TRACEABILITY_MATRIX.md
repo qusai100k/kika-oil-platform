@@ -151,3 +151,13 @@ Foundation evidence now exists for BR-001/002/009/010, FR-001/002/004, NFR-001/0
 | إتاحة | landmarks, labels, focus, live regions | مراجعة DOM ومتصفح |
 | SEO | metadata, sitemap, robots, Breadcrumb JSON-LD | build ومراجعة المصدر |
 | حدود النطاق | لا auth/cart/checkout/payment/AI/booking | مراجعة التنفيذ |
+# Phase 3 traceability
+
+| Requirement | Implementation | Verification |
+|---|---|---|
+| Register/login/logout | Better Auth API + Arabic forms | Browser + build |
+| Recovery | Better Auth expiring reset token | Architecture review |
+| Protected account | Server `requireSession` layout | Browser redirect |
+| Profile/address/security | Server actions with Zod and ownership | Browser + TypeScript |
+| Role safety | Non-input role default `CUSTOMER` | Schema/config review |
+| Isolated database | Neon Preview/Development connection | Migration + Vercel env audit |

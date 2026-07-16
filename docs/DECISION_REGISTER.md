@@ -41,3 +41,9 @@ No unknown business decision is confirmed.
 - استخدام صور محلية مولدة بدل أصول Instagram أو صور عملاء.
 - عدم نشر Product structured data لأن البيانات والأسعار غير معتمدة؛ الاكتفاء بـBreadcrumb.
 - التواصل محلي فقط، مع رسالة صريحة بعدم الإرسال.
+# Phase 3 decisions (2026-07-16)
+
+- Better Auth 1.6.23 selected to avoid a second session system and retain server-side session validation.
+- Neon free PostgreSQL selected for isolated Preview/Development data; Production credentials remain untouched.
+- Email transport remains provider-neutral pending business approval; no token is exposed in public UI or Preview logs.
+- Public registrations are always `CUSTOMER`; dashboards for staff remain outside Phase 3.

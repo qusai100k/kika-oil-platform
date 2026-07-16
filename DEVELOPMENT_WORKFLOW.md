@@ -50,3 +50,6 @@ This workflow protects the approved client presentation while allowing future ph
 - Use messages such as `Phase 3: add customer authentication foundation` or `Phase 3: fix preview accessibility findings`.
 - Commit documentation, implementation, and corrective QA changes separately when that improves review clarity.
 - Do not merge or deploy to production until the project owner explicitly approves the release.
+# Phase 3 note
+
+Phase 3 database and auth variables are scoped only to Vercel Preview and Development. The `develop` branch creates Preview deployments; `main` remains the sole production branch and must not be merged without explicit approval.

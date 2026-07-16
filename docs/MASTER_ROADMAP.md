@@ -88,3 +88,6 @@
 # تحديث حالة خارطة الطريق — 2026-07-16
 
 المرحلة الثانية (Brand Design and Public Storefront) منفذة وظيفيًا وبصريًا، مع بقاء اعتماد المحتوى والأصول، مرور لوحة مفاتيح يدوي كامل، وبيانات PostgreSQL المحلية كمتابعات معلنة. لم تبدأ المرحلة الثالثة.
+# Phase 3 status update (2026-07-16)
+
+Authentication and the customer-account foundation are implemented on `develop`. Phase 4 remains unstarted. Promotion to `main` requires explicit owner approval after Preview acceptance.

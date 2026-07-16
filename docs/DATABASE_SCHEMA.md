@@ -27,4 +27,7 @@ The PostgreSQL/Prisma schema contains 36 models and 11 enums. It is provisional 
 `prisma format`, `prisma validate`, and client generation pass. Migration and seed were attempted against the local PostgreSQL listener but failed because the provisional `postgres/postgres` credentials were rejected (`P1000`). No migration was created and no data was inserted. Supply a valid `DATABASE_URL`, then run the documented commands.
 
 Database-level check constraints for positive quantity/rating/stock should be added in the first generated SQL migration; Prisma-level/server validation remains required.
+# Phase 3 authentication update (2026-07-16)
+
+`User`, `Account`, and `Session` now follow Better Auth's Prisma contract while preserving the platform role and domain relations. `Verification` stores expiring verification/reset values. `Address` gained optional `building` and `notes`; all address writes are scoped by authenticated `userId`. Migration: `20260716102036_phase_3_auth_accounts`.
 
