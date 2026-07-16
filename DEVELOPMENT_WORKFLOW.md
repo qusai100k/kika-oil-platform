@@ -53,3 +53,7 @@ This workflow protects the approved client presentation while allowing future ph
 # Phase 3 note
 
 Phase 3 database and auth variables are scoped only to Vercel Preview and Development. The `develop` branch creates Preview deployments; `main` remains the sole production branch and must not be merged without explicit approval.
+
+## Changelog and release discipline
+
+Every phase implementation must update `CHANGELOG.md` in the same phase commit. Work is recorded under `Unreleased` while in development. A release requires an approved semantic version, a dated changelog section, matching `RELEASE_NOTES.md`, and the same version in `package.json`. Documentation-only corrections that do not change released behavior remain under `Unreleased` unless they correct a specific release record.
