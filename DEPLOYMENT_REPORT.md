@@ -55,6 +55,9 @@ The following public routes were verified after deployment:
 
 - **Release date:** 2026-07-17
 - **Scope:** Completed Phases 3 through 6 promoted from `release/v0.6.0-rc` to `main`.
+- **Production deployment ID:** `dpl_6YFZVwt8k7Eh8jeDcDYobGWG243M`
+- **Merge commit:** `d592eed`
+- **Release documentation commit:** `3768945`
 - **Backup branch:** `backup/pre-v0.6.0-production`
 - **Production database:** Neon PostgreSQL database `kika_oil_production`, separate from Development database `neondb`.
 - **Production environment variables:** `DATABASE_URL`, `DATABASE_URL_UNPOOLED`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `NEXT_PUBLIC_SITE_URL`.

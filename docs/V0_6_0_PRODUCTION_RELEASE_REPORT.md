@@ -22,6 +22,10 @@ Phase 7 is not included in this Production release.
 - Approved release tag: `v0.6.0`
 - Backup branch: `backup/pre-v0.6.0-production`
 - Merge strategy: normal merge commit into `main`
+- Merge commit: `d592eed`
+- Release documentation commit: `3768945`
+- Production deployment ID: `dpl_6YFZVwt8k7Eh8jeDcDYobGWG243M`
+- Production URL: https://kika-oil-platform.vercel.app
 
 ## Production data policy
 
@@ -35,3 +39,8 @@ Production was seeded only with required platform data:
 
 No production admin account or password was created.
 
+## Smoke test result
+
+Production smoke testing passed for public routes, registration, protected account access, address creation, add-to-cart, checkout, order placement, order detail, cancellation, structured assessment start, and admin route protection.
+
+The temporary smoke data was removed after verification.
