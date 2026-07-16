@@ -171,3 +171,13 @@ Foundation evidence now exists for BR-001/002/009/010, FR-001/002/004, NFR-001/0
 | Coupons | Normalization, eligibility, caps and redemption | 12 rules tests |
 | Inventory | Conditional decrement and movement ledger | Transaction review |
 | Cancellation | State gate and unique restoration movement | Rules tests + schema |
+# Phase 5 traceability update
+
+| Requirement | Implementation | Verification |
+|---|---|---|
+| Server RBAC | `authorization.ts`, admin services | RBAC tests and route redirects |
+| Catalog operations | product/variant services and routes | validation tests, Preview workflow |
+| Inventory integrity | serializable adjustment service and movement ledger | negative/zero/idempotency tests |
+| Order operations | transition map and payment confirmation | transition/double-confirmation tests |
+| Privacy and audit | scoped customer query and recursive audit redaction | redaction tests and audit viewer |
+| Safe content/settings | structured records and Zod allowlists | sanitization/URL/settings tests |

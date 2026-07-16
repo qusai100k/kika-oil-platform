@@ -2,6 +2,13 @@
 
 These notes summarize the business-facing outcome of each prototype release. They do not imply commercial launch approval or activation of future-phase services.
 
+## v0.5.0 — Store Operations Dashboard
+
+Released: 2026-07-16
+Status: Develop Preview only; not promoted to Production.
+
+Authorized staff can operate the development store through a responsive Arabic dashboard. Role boundaries separate content and order work, while server checks protect every mutation. The release adds catalog and variant management, controlled stock adjustments, order progression, one-time manual transfer confirmation, coupon administration, privacy-conscious customer summaries, review moderation, structured content, provisional settings, audit review, and real database analytics. Durable image hosting and approved commercial settings remain pending; no AI, skin assessment, recommendation, specialist booking, or real payment integration was added.
+
 ## v0.4.0 — Commerce Foundation
 
 Released: 2026-07-16  

@@ -1,0 +1,2 @@
+import {AdminHeader} from "@/components/admin/admin-shell";import {ProductForm} from "@/components/admin/product-form";import {requireAdmin} from "@/server/auth/authorization";import {getDb} from "@/server/db/client";
+export default async function Page(){await requireAdmin("products:write");const categories=await getDb().productCategory.findMany({where:{deletedAt:null},select:{id:true,nameAr:true}});return <><AdminHeader title="إضافة منتج" description="ابدئي بالبيانات الأساسية؛ يمكن إضافة المتغيرات بعد الحفظ."/><ProductForm categories={categories}/></>}

@@ -34,3 +34,6 @@ Database-level check constraints for positive quantity/rating/stock should be ad
 ## Phase 4 commerce update
 
 Orders now store payment state, idempotency, tax, and immutable coupon/shipping snapshots. Order items store product slug, size, image, and currency snapshots. `CouponRedemption`, `OrderStatusHistory`, `InventoryMovement`, `CheckoutAttempt`, and `OrderCancellationRequest` provide enforcement and history. Migration: `20260716144500_phase_4_commerce_foundation`.
+# Phase 5 admin operations update
+
+Migration `20260716173500_phase_5_admin_operations` adds catalog SEO/storage/order fields, variant stock thresholds/default ordering, provider-neutral image metadata, inventory actor/reason/note/idempotency, payment confirmer/timestamp, review moderation metadata, and structured `ContentEntry` records. Foreign keys retain actor history with `SET NULL`; commerce snapshots remain immutable.

@@ -13,6 +13,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A phase cannot be marked complete until its changes are categorized under Added, Changed, Fixed, Security, Deprecated, or Removed.
 - When a release is approved, move Unreleased entries into a dated semantic version and update `RELEASE_NOTES.md` and `package.json` together.
 
+## [0.5.0] - 2026-07-16
+
+### Added
+
+- Secure Arabic RTL operations dashboard with real development metrics.
+- Server-enforced permissions for Store Owner, Admin, Content Manager, Order Manager, and Super Admin.
+- Product, variant, inventory, order, coupon, customer, review, structured content, settings, analytics, and audit workflows.
+- Central order transition rules, one-time manual payment confirmation, inventory adjustment ledger, and controlled development role promotion.
+- Phase 5 migration, admin security documentation, workflows, acceptance report, and expanded automated tests.
+
+### Security
+
+- Prevented client-controlled roles, mass assignment, invalid transitions, repeated payment confirmation, negative stock, repeated adjustments, unsafe content URLs, and audit secret leakage.
+- Kept binary media upload disabled until durable storage is approved instead of writing to Vercel's ephemeral filesystem.
+
 ## [0.4.0] - 2026-07-16
 
 ### Added

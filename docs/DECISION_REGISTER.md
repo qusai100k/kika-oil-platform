@@ -53,3 +53,10 @@ No unknown business decision is confirmed.
 - `XXX`, shipping `25`, COD, and manual transfer are development-only configuration, not approved commercial terms.
 - Serializable transactions plus conditional variant updates prevent overselling.
 - Customer cancellation is limited to pre-fulfillment states; refund execution and staff confirmation remain Phase 5.
+
+## Phase 5 decisions (2026-07-16)
+
+- Permissions are centralized and enforced on the server; navigation filtering is convenience only.
+- Product removal uses archive semantics, preserving order snapshots.
+- Persistent image upload is deferred until a durable provider is approved; Vercel filesystem storage is prohibited.
+- Development roles are assigned only to pre-registered accounts through a controlled, Production-disabled script.

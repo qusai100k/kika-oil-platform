@@ -95,3 +95,7 @@ Authentication and the customer-account foundation were completed on `develop`; 
 ## Phase 4 status update (2026-07-16)
 
 The commerce foundation is implemented on `develop` at v0.4.0. Phase 5 admin and fulfillment tooling remains unstarted. Production promotion requires explicit approval.
+
+## Phase 5 status update (2026-07-16)
+
+The secure admin and store-operations foundation is implemented on `develop` at v0.5.0. Phase 6 assessment work has not started. Production promotion requires explicit approval.
