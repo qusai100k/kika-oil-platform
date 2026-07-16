@@ -49,3 +49,4 @@ The following public routes were verified after deployment:
 - Policy pages are presentation drafts and require commercial and legal approval before a transactional launch.
 - No production database is connected because the deployed prototype uses static storefront data only.
 - The current Vercel project was published with the official Vercel CLI. The GitHub repository is the source of record, but automatic deployment on every GitHub push requires installing the Vercel GitHub App for this repository.
+- `npm audit` reports moderate advisories inherited through the current Next.js/PostCSS and Prisma tooling dependency trees. No compatible non-breaking remediation is currently offered by npm; forced remediation would downgrade core frameworks and was therefore not applied.
