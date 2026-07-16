@@ -161,3 +161,13 @@ Foundation evidence now exists for BR-001/002/009/010, FR-001/002/004, NFR-001/0
 | Profile/address/security | Server actions with Zod and ownership | Browser + TypeScript |
 | Role safety | Non-input role default `CUSTOMER` | Schema/config review |
 | Isolated database | Neon Preview/Development connection | Migration + Vercel env audit |
+
+## Phase 4 traceability
+
+| Requirement | Implementation | Evidence |
+|---|---|---|
+| Persistent secure cart | User-unique Cart and owned server actions | Build + service review |
+| Safe order | Serializable transaction, snapshots, idempotency | Migration + tests |
+| Coupons | Normalization, eligibility, caps and redemption | 12 rules tests |
+| Inventory | Conditional decrement and movement ledger | Transaction review |
+| Cancellation | State gate and unique restoration movement | Rules tests + schema |

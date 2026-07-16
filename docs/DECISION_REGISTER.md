@@ -47,3 +47,9 @@ No unknown business decision is confirmed.
 - Neon free PostgreSQL selected for isolated Preview/Development data; Production credentials remain untouched.
 - Email transport remains provider-neutral pending business approval; no token is exposed in public UI or Preview logs.
 - Public registrations are always `CUSTOMER`; dashboards for staff remain outside Phase 3.
+
+## Phase 4 decisions (2026-07-16)
+
+- `XXX`, shipping `25`, COD, and manual transfer are development-only configuration, not approved commercial terms.
+- Serializable transactions plus conditional variant updates prevent overselling.
+- Customer cancellation is limited to pre-fulfillment states; refund execution and staff confirmation remain Phase 5.

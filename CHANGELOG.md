@@ -13,6 +13,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A phase cannot be marked complete until its changes are categorized under Added, Changed, Fixed, Security, Deprecated, or Removed.
 - When a release is approved, move Unreleased entries into a dated semantic version and update `RELEASE_NOTES.md` and `package.json` together.
 
+## [0.4.0] - 2026-07-16
+
+### Added
+
+- Persistent authenticated cart with add, merge, quantity update, remove, clear, server totals, and header count.
+- Structured checkout with owned address selection, demo shipping, coupon validation, provisional COD/manual-transfer methods, and review totals.
+- Transactional order creation, immutable item/address/coupon/shipping snapshots, idempotency keys, status history, notifications, and audit events.
+- Fixed and percentage coupons with dates, minimum spend, caps, total limits, and per-customer limits.
+- Atomic variant stock decrement, inventory movements, overselling protection, eligible cancellation, and idempotent stock restoration.
+- Order confirmation, customer order history, secure details, timeline, and cancellation UI.
+- Development-only products, stock states, coupons, and commerce settings.
+
+### Changed
+
+- Activated the account Orders section and updated the project version to `0.4.0`.
+- Replaced the cart presentation placeholder with the Phase 4 commerce experience.
+- Marked currency, shipping, COD, and transfer behavior as provisional throughout the UI and documentation.
+
+### Security
+
+- Enforced cart, address, and order ownership on every server mutation and lookup.
+- Recalculated price, stock, discounts, shipping, and totals exclusively on the server.
+- Used serializable PostgreSQL transactions and conditional stock updates to prevent overselling.
+- Added safe order-reference validation, duplicate-submission protection, and cancellation state checks.
+
 ## [0.3.0] - 2026-07-16
 
 ### Added
@@ -84,7 +109,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added environment-variable boundaries, server-only database access, role definitions, ownership helpers, and audit-log schema foundations.
 
-[Unreleased]: https://github.com/qusai100k/kika-oil-platform/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/qusai100k/kika-oil-platform/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/qusai100k/kika-oil-platform/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/qusai100k/kika-oil-platform/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/qusai100k/kika-oil-platform/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/qusai100k/kika-oil-platform/releases/tag/v0.1.0

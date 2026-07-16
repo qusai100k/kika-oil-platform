@@ -1,0 +1,3 @@
+const labels:Record<string,string>={PENDING_PAYMENT:"بانتظار التحويل",PAYMENT_REVIEW:"مراجعة الدفع",CONFIRMED:"مؤكد",PREPARING:"قيد التجهيز",READY_TO_SHIP:"جاهز للشحن",SHIPPED:"تم الشحن",DELIVERED:"تم التسليم",CANCELLED:"ملغي"};
+export function OrderStatusBadge({status}:{status:string}){return <span className={`order-status order-status--${status.toLowerCase()}`}>{labels[status]||status}</span>}
+export const paymentLabels:Record<string,string>={CASH_ON_DELIVERY:"الدفع عند الاستلام — تجريبي",MANUAL_BANK_TRANSFER:"تحويل بنكي يدوي — تجريبي",AWAITING_TRANSFER:"بانتظار تعليمات/تحويل",NOT_REQUIRED:"لا توجد دفعة إلكترونية",CANCELLED:"ملغي"};

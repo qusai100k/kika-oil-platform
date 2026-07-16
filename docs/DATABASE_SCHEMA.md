@@ -31,3 +31,6 @@ Database-level check constraints for positive quantity/rating/stock should be ad
 
 `User`, `Account`, and `Session` now follow Better Auth's Prisma contract while preserving the platform role and domain relations. `Verification` stores expiring verification/reset values. `Address` gained optional `building` and `notes`; all address writes are scoped by authenticated `userId`. Migration: `20260716102036_phase_3_auth_accounts`.
 
+## Phase 4 commerce update
+
+Orders now store payment state, idempotency, tax, and immutable coupon/shipping snapshots. Order items store product slug, size, image, and currency snapshots. `CouponRedemption`, `OrderStatusHistory`, `InventoryMovement`, `CheckoutAttempt`, and `OrderCancellationRequest` provide enforcement and history. Migration: `20260716144500_phase_4_commerce_foundation`.

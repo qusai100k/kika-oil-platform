@@ -9,3 +9,5 @@
 | `NEXT_PUBLIC_SITE_URL` | Public | Canonical site URL |
 
 Never expose database credentials or the auth secret through `NEXT_PUBLIC_*`. Production database configuration is deliberately absent during Phase 3.
+
+Phase 4 introduces no new secrets. Currency, demo shipping, tax disabled state, and provisional payment availability live in server-controlled `src/config/commerce.ts` and must be approved before Production.

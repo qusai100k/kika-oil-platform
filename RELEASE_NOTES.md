@@ -2,6 +2,13 @@
 
 These notes summarize the business-facing outcome of each prototype release. They do not imply commercial launch approval or activation of future-phase services.
 
+## v0.4.0 — Commerce Foundation
+
+Released: 2026-07-16  
+Status: Develop Preview only; not promoted to Production.
+
+Authenticated customers can now build a persistent cart, select an owned delivery address, apply development coupons, review server-calculated totals, choose provisional cash-on-delivery or manual transfer, create an order, review its immutable record, and cancel before fulfillment. PostgreSQL transactions conditionally decrement variant stock and restore it once on cancellation. Currency `XXX`, shipping `25`, payment availability, products, stock, and coupons are explicitly development data awaiting business approval. No real payment provider, bank details, refund processing, admin dashboard, AI, or specialist booking was added.
+
 ## v0.3.0 — Secure Customer Accounts
 
 Released: 2026-07-16  
