@@ -190,3 +190,16 @@ Foundation evidence now exists for BR-001/002/009/010, FR-001/002/004, NFR-001/0
 | Immutable submission | snapshots/status/idempotency | service guards and build |
 | Safety outcomes | deterministic evaluator | ready/more-info/referral tests |
 | Sensitive admin boundary | RBAC permissions | role tests |
+
+# Phase 7 traceability
+
+| Requirement | Implementation | Verification |
+|---|---|---|
+| Deterministic recommendation only | `src/server/recommendation/*` pure scoring/exclusion services | 22 engine/service tests |
+| Assessment eligibility gate | `assertRecommendationEligibility` and server actions | owner/ready/not-ready tests |
+| Hard safety exclusions before scoring | `exclusions.ts`, ingredient restrictions, readiness rows | golden cases and no-result tests |
+| Versioned configuration | `RecommendationConfig`, weights, templates, admin actions | migration, seed, validation tests |
+| Explainable ranked output | `rankProducts`, `buildExplanation`, recommendation detail UI | tests and build |
+| Customer ownership and idempotency | `generateRecommendation`, owned lookup, add-to-cart action | service tests and smoke |
+| Admin visibility without sensitive answer leakage | admin recommendation run list/detail pages | route review and build |
+| No AI/diagnosis/claims | template guard and banned-claim checks | text safety tests |

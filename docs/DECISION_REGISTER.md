@@ -65,3 +65,12 @@ No unknown business decision is confirmed.
 - Deterministic safety screening only; product matching is Phase 7.
 - Published content is immutable and submission snapshots preserve history.
 - All seeded questions, rules, age handling, and retention are provisional approval gates.
+
+## Phase 7 decisions (2026-07-17)
+
+- Product recommendation is deterministic and rule-based only; no AI, chatbot, diagnosis, prescription, or free-text product selection was introduced.
+- Recommendation generation is allowed only after an owned submitted assessment reaches `READY_FOR_FUTURE_RECOMMENDATION`.
+- Hard exclusions run before scoring: incomplete product data, missing variant, skin incompatibility, ingredient restriction, referral, and human-review gates.
+- Published recommendation configs are immutable; every change starts from a draft copy and creates a new version.
+- Recommendation runs store immutable assessment/config/product snapshots for auditability and future reproducibility.
+- Seeded mappings, score weights, ingredient restrictions, and explanation templates are development-only until owner/specialist/legal approval.

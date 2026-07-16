@@ -1,0 +1,6 @@
+import { redirect } from "next/navigation";
+
+export default async function Page({ params }: { params: Promise<{ assessmentId: string }> }) {
+  const { assessmentId } = await params;
+  redirect(`/skin-assessment/${assessmentId}/result`);
+}

@@ -13,6 +13,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A phase cannot be marked complete until its changes are categorized under Added, Changed, Fixed, Security, Deprecated, or Removed.
 - When a release is approved, move Unreleased entries into a dated semantic version and update `RELEASE_NOTES.md` and `package.json` together.
 
+## [0.7.0] - 2026-07-17
+
+### Added
+
+- Phase 7 deterministic product recommendation engine on `develop`, connected to completed Phase 6 structured assessment results.
+- Versioned recommendation configuration, score weights, explanation templates, product readiness checks, ingredient restrictions, and audit/status history.
+- Customer recommendation history and detail pages with deterministic explanations, transparent limitation language, product links, and explicit add-to-cart action.
+- Admin recommendation dashboard covering configuration versions, run history, run detail, and product readiness.
+- Recommendation architecture, scoring, rule catalog, explanation, admin, customer, privacy/security, readiness, implementation, acceptance, and test documentation.
+- Golden-case recommendation tests covering eligibility, hard exclusions, scoring, no-result behavior, idempotency, stale config behavior, duplicate prevention, privacy boundaries, and claim-safety wording.
+
+### Changed
+
+- Updated the project package version from `0.6.0` to `0.7.0`.
+- Extended Prisma guidance models so recommendations store immutable assessment/config/product snapshots and can supersede earlier runs safely.
+- Added `recommendations:read` and `recommendations:configure` permissions to the admin authorization matrix.
+
+### Security
+
+- Recommendations only run for authenticated owners of submitted assessments marked ready for future recommendation.
+- The engine applies safety/referral gates and hard exclusions before ranking products.
+- Admin run views avoid exposing raw assessment answer snapshots in broad operational lists.
+- Recommendation text is generated from controlled templates and guarded against diagnostic, treatment, cure, or unsupported medical claims.
+
+### Fixed
+
+- Replaced broken Arabic text encoding in Phase 7 admin recommendation pages.
+- Routed admin recommendation run rows to an admin-safe detail page instead of customer account pages.
+
 ## [0.6.0] - 2026-07-16
 
 ### Added
@@ -144,7 +173,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added environment-variable boundaries, server-only database access, role definitions, ownership helpers, and audit-log schema foundations.
 
-[Unreleased]: https://github.com/qusai100k/kika-oil-platform/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/qusai100k/kika-oil-platform/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/qusai100k/kika-oil-platform/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/qusai100k/kika-oil-platform/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/qusai100k/kika-oil-platform/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/qusai100k/kika-oil-platform/compare/v0.3.0...v0.4.0

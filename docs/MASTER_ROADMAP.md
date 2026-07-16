@@ -102,3 +102,7 @@ The secure admin and store-operations foundation is implemented on `develop` at 
 ## Phase 6 status update (2026-07-16)
 
 Structured assessment is implemented on `develop` at v0.6.0. Phase 7 recommendation work has not started.
+
+## Phase 7 status update (2026-07-17)
+
+Deterministic product recommendations are implemented on `develop` at v0.7.0 as a release candidate. The engine is rules-based, versioned, auditable, and connected to eligible Phase 6 assessments. Phase 8 specialist consultation work has not started. Production promotion requires explicit owner approval and a future merge to `main`.

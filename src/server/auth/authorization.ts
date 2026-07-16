@@ -1,14 +1,14 @@
 import { redirect } from "next/navigation";
 import type { UserRole } from "../../../generated/prisma/enums";
 
-export const permissions = ["dashboard:view","products:read","products:write","inventory:read","inventory:write","orders:read","orders:write","payments:confirm","coupons:write","customers:read","customers:sensitive","reviews:moderate","content:write","settings:write","analytics:read","audit:read","assessments:read","assessments:configure","team:manage"] as const;
+export const permissions = ["dashboard:view","products:read","products:write","inventory:read","inventory:write","orders:read","orders:write","payments:confirm","coupons:write","customers:read","customers:sensitive","reviews:moderate","content:write","settings:write","analytics:read","audit:read","assessments:read","assessments:configure","recommendations:read","recommendations:configure","team:manage"] as const;
 export type Permission = typeof permissions[number];
 export type AuthenticatedPrincipal = { userId: string; roles: UserRole[] };
 
 const all: Permission[]=[...permissions];
 export const rolePermissions: Record<UserRole,readonly Permission[]>={
   CUSTOMER:[],SPECIALIST:[],
-  CONTENT_MANAGER:["dashboard:view","products:read","products:write","inventory:read","reviews:moderate","content:write","assessments:read"],
+  CONTENT_MANAGER:["dashboard:view","products:read","products:write","inventory:read","reviews:moderate","content:write","assessments:read","recommendations:read"],
   ORDER_MANAGER:["dashboard:view","inventory:read","inventory:write","orders:read","orders:write","payments:confirm","customers:read"],
   ADMIN:all.filter(p=>p!=="team:manage"),STORE_OWNER:all.filter(p=>p!=="team:manage"),SUPER_ADMIN:all,
 };

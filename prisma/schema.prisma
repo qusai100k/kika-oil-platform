@@ -98,11 +98,28 @@ enum AssessmentStatus {
 }
 
 enum RecommendationStatus {
-  RECOMMENDED
-  NEEDS_INFORMATION
-  REFERRED
-  NO_RECOMMENDATION
-  FAILED
+  PENDING
+  GENERATED
+  NO_ELIGIBLE_PRODUCT
+  WITHHELD_FOR_SAFETY
+  NEEDS_HUMAN_REVIEW
+  INSUFFICIENT_PRODUCT_DATA
+  EXPIRED
+  SUPERSEDED
+}
+
+enum RecommendationRuleType {
+  HARD_EXCLUSION
+  SCORE
+  PENALTY
+}
+
+enum RecommendationApprovalStatus {
+  DRAFT
+  PROVISIONAL
+  REVIEW_REQUIRED
+  APPROVED
+  ARCHIVED
 }
 
 enum BookingStatus {
@@ -276,9 +293,9 @@ model ProductCategory {
 }
 
 model Product {
-  id                    String                     @id @default(uuid()) @db.Uuid
-  categoryId            String                     @db.Uuid
-  slug                  String                     @unique
+  id                    String                      @id @default(uuid()) @db.Uuid
+  categoryId            String                      @db.Uuid
+  slug                  String                      @unique
   nameAr                String
   shortDescriptionAr    String?
   descriptionAr         String?
@@ -287,44 +304,46 @@ model Product {
   storageInstructionsAr String?
   seoTitleAr            String?
   seoDescriptionAr      String?
-  sortOrder             Int                        @default(0)
-  status                ProductStatus              @default(DRAFT)
-  isFeatured            Boolean                    @default(false)
+  sortOrder             Int                         @default(0)
+  status                ProductStatus               @default(DRAFT)
+  isFeatured            Boolean                     @default(false)
   deletedAt             DateTime?
-  createdAt             DateTime                   @default(now())
-  updatedAt             DateTime                   @updatedAt
-  category              ProductCategory            @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  createdAt             DateTime                    @default(now())
+  updatedAt             DateTime                    @updatedAt
+  category              ProductCategory             @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   variants              ProductVariant[]
   images                ProductImage[]
   ingredients           ProductIngredient[]
   skinCompatibility     ProductSkinCompatibility[]
   concernMappings       ProductConcernMapping[]
   recommendationItems   RecommendationItem[]
+  recommendationRules   ProductRecommendationRule[]
   reviews               Review[]
 
   @@index([categoryId, status, deletedAt])
 }
 
 model ProductVariant {
-  id                 String              @id @default(uuid()) @db.Uuid
-  productId          String              @db.Uuid
-  sku                String              @unique
-  nameAr             String
-  sizeLabel          String?
-  price              Decimal             @db.Decimal(12, 2)
-  currency           String              @db.VarChar(3)
-  stock              Int                 @default(0)
-  lowStockThreshold  Int                 @default(3)
-  sortOrder          Int                 @default(0)
-  isDefault          Boolean             @default(false)
-  isActive           Boolean             @default(true)
-  deletedAt          DateTime?
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  product            Product             @relation(fields: [productId], references: [id], onDelete: Restrict)
-  cartItems          CartItem[]
-  orderItems         OrderItem[]
-  inventoryMovements InventoryMovement[]
+  id                  String               @id @default(uuid()) @db.Uuid
+  productId           String               @db.Uuid
+  sku                 String               @unique
+  nameAr              String
+  sizeLabel           String?
+  price               Decimal              @db.Decimal(12, 2)
+  currency            String               @db.VarChar(3)
+  stock               Int                  @default(0)
+  lowStockThreshold   Int                  @default(3)
+  sortOrder           Int                  @default(0)
+  isDefault           Boolean              @default(false)
+  isActive            Boolean              @default(true)
+  deletedAt           DateTime?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  product             Product              @relation(fields: [productId], references: [id], onDelete: Restrict)
+  cartItems           CartItem[]
+  orderItems          OrderItem[]
+  inventoryMovements  InventoryMovement[]
+  recommendationItems RecommendationItem[]
 
   @@index([productId, isActive, deletedAt])
 }
@@ -347,15 +366,16 @@ model ProductImage {
 }
 
 model Ingredient {
-  id            String              @id @default(uuid()) @db.Uuid
-  slug          String              @unique
+  id            String                         @id @default(uuid()) @db.Uuid
+  slug          String                         @unique
   nameAr        String
   descriptionAr String?
-  isDemo        Boolean             @default(true)
-  isActive      Boolean             @default(true)
-  createdAt     DateTime            @default(now())
-  updatedAt     DateTime            @updatedAt
+  isDemo        Boolean                        @default(true)
+  isActive      Boolean                        @default(true)
+  createdAt     DateTime                       @default(now())
+  updatedAt     DateTime                       @updatedAt
   products      ProductIngredient[]
+  restrictions  ProductIngredientRestriction[]
 }
 
 model ProductIngredient {
@@ -367,6 +387,23 @@ model ProductIngredient {
   ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Restrict)
 
   @@id([productId, ingredientId])
+}
+
+model ProductIngredientRestriction {
+  id                         String                       @id @default(uuid()) @db.Uuid
+  ingredientId               String                       @db.Uuid
+  code                       String
+  labelAr                    String
+  isHardExclusion            Boolean                      @default(true)
+  requiresSpecialistApproval Boolean                      @default(true)
+  approvalStatus             RecommendationApprovalStatus @default(PROVISIONAL)
+  isActive                   Boolean                      @default(true)
+  createdAt                  DateTime                     @default(now())
+  updatedAt                  DateTime                     @updatedAt
+  ingredient                 Ingredient                   @relation(fields: [ingredientId], references: [id], onDelete: Restrict)
+
+  @@unique([ingredientId, code])
+  @@index([approvalStatus, isActive])
 }
 
 model SkinType {
@@ -790,49 +827,171 @@ model AssessmentSubmissionRevision {
 }
 
 model Recommendation {
-  id                 String               @id @default(uuid()) @db.Uuid
-  userId             String               @db.Uuid
-  assessmentId       String               @db.Uuid
-  rulesetVersion     String
-  productDataVersion String
-  status             RecommendationStatus
-  explanationAr      String?
-  referralCode       String?
-  createdAt          DateTime             @default(now())
-  user               User                 @relation(fields: [userId], references: [id], onDelete: Restrict)
-  assessment         SkinAssessment       @relation(fields: [assessmentId], references: [id], onDelete: Restrict)
-  items              RecommendationItem[]
+  id                       String                        @id @default(uuid()) @db.Uuid
+  userId                   String                        @db.Uuid
+  assessmentId             String                        @db.Uuid
+  configId                 String?                       @db.Uuid
+  configVersion            Int
+  engineVersion            String
+  productDataVersion       String
+  status                   RecommendationStatus
+  matchLevel               String?
+  explanationAr            String?
+  safetyNoticeAr           String?
+  profileSnapshot          Json
+  eligibilitySnapshot      Json
+  excludedProductsSnapshot Json
+  scoreSnapshot            Json
+  rankingSnapshot          Json
+  productSnapshot          Json
+  explanationSnapshot      Json
+  idempotencyKey           String                        @unique
+  generatedAt              DateTime?
+  expiresAt                DateTime?
+  supersededAt             DateTime?
+  supersededById           String?                       @unique @db.Uuid
+  createdAt                DateTime                      @default(now())
+  updatedAt                DateTime                      @updatedAt
+  user                     User                          @relation(fields: [userId], references: [id], onDelete: Restrict)
+  assessment               SkinAssessment                @relation(fields: [assessmentId], references: [id], onDelete: Restrict)
+  config                   RecommendationConfig?         @relation(fields: [configId], references: [id], onDelete: SetNull)
+  supersededBy             Recommendation?               @relation("RecommendationSupersession", fields: [supersededById], references: [id], onDelete: SetNull)
+  supersedes               Recommendation?               @relation("RecommendationSupersession")
+  items                    RecommendationItem[]
+  statusHistory            RecommendationStatusHistory[]
 
   @@index([userId, createdAt])
+  @@index([assessmentId, status])
+  @@index([configId, configVersion])
 }
 
 model RecommendationItem {
-  id               String         @id @default(uuid()) @db.Uuid
-  recommendationId String         @db.Uuid
-  productId        String         @db.Uuid
-  rank             Int
-  reasonCode       String
-  recommendation   Recommendation @relation(fields: [recommendationId], references: [id], onDelete: Cascade)
-  product          Product        @relation(fields: [productId], references: [id], onDelete: Restrict)
+  id                 String          @id @default(uuid()) @db.Uuid
+  recommendationId   String          @db.Uuid
+  productId          String          @db.Uuid
+  variantId          String?         @db.Uuid
+  rank               Int
+  score              Int
+  matchLevel         String
+  role               String
+  explanationAr      String
+  scoreContributions Json
+  productSnapshot    Json
+  recommendation     Recommendation  @relation(fields: [recommendationId], references: [id], onDelete: Cascade)
+  product            Product         @relation(fields: [productId], references: [id], onDelete: Restrict)
+  variant            ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
 
   @@unique([recommendationId, productId])
+  @@index([productId, rank])
 }
 
 model RecommendationRule {
-  id             String       @id @default(uuid()) @db.Uuid
-  code           String
-  version        Int
-  titleAr        String
-  descriptionAr  String?
-  ruleDefinition Json
-  status         RecordStatus @default(DRAFT)
-  approvedBy     String?
-  approvedAt     DateTime?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  id                         String                       @id @default(uuid()) @db.Uuid
+  configId                   String                       @db.Uuid
+  code                       String
+  type                       RecommendationRuleType
+  titleAr                    String
+  descriptionAr              String?
+  profileField               String?
+  matchValue                 String?
+  productField               String?
+  scoreDelta                 Int                          @default(0)
+  priority                   Int                          @default(0)
+  customerExplanationAr      String?
+  internalReason             String
+  isActive                   Boolean                      @default(true)
+  approvalStatus             RecommendationApprovalStatus @default(PROVISIONAL)
+  requiresSpecialistApproval Boolean                      @default(true)
+  createdAt                  DateTime                     @default(now())
+  updatedAt                  DateTime                     @updatedAt
+  config                     RecommendationConfig         @relation(fields: [configId], references: [id], onDelete: Cascade)
 
-  @@unique([code, version])
+  @@unique([configId, code])
+  @@index([configId, type, priority])
+}
+
+model RecommendationConfig {
+  id                   String                              @id @default(uuid()) @db.Uuid
+  key                  String
+  nameAr               String
+  version              Int
+  status               RecordStatus                        @default(DRAFT)
+  approvalStatus       RecommendationApprovalStatus        @default(PROVISIONAL)
+  engineVersion        String
+  isProvisional        Boolean                             @default(true)
+  publishedAt          DateTime?
+  archivedAt           DateTime?
+  createdAt            DateTime                            @default(now())
+  updatedAt            DateTime                            @updatedAt
+  weights              RecommendationScoreWeight[]
+  rules                RecommendationRule[]
+  productRules         ProductRecommendationRule[]
+  explanationTemplates RecommendationExplanationTemplate[]
+  recommendations      Recommendation[]
+
+  @@unique([key, version])
   @@index([status, version])
+}
+
+model RecommendationScoreWeight {
+  id        String               @id @default(uuid()) @db.Uuid
+  configId  String               @db.Uuid
+  code      String
+  labelAr   String
+  weight    Int
+  minScore  Int                  @default(-100)
+  maxScore  Int                  @default(100)
+  sortOrder Int                  @default(0)
+  isActive  Boolean              @default(true)
+  config    RecommendationConfig @relation(fields: [configId], references: [id], onDelete: Cascade)
+
+  @@unique([configId, code])
+  @@index([configId, sortOrder])
+}
+
+model ProductRecommendationRule {
+  id             String                       @id @default(uuid()) @db.Uuid
+  configId       String                       @db.Uuid
+  productId      String                       @db.Uuid
+  code           String
+  type           RecommendationRuleType
+  scoreDelta     Int                          @default(0)
+  priority       Int                          @default(0)
+  internalReason String
+  explanationAr  String?
+  isActive       Boolean                      @default(true)
+  approvalStatus RecommendationApprovalStatus @default(PROVISIONAL)
+  config         RecommendationConfig         @relation(fields: [configId], references: [id], onDelete: Cascade)
+  product        Product                      @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([configId, productId, code])
+  @@index([configId, type, priority])
+}
+
+model RecommendationExplanationTemplate {
+  id        String               @id @default(uuid()) @db.Uuid
+  configId  String               @db.Uuid
+  code      String
+  labelAr   String
+  bodyAr    String
+  sortOrder Int                  @default(0)
+  isActive  Boolean              @default(true)
+  config    RecommendationConfig @relation(fields: [configId], references: [id], onDelete: Cascade)
+
+  @@unique([configId, code])
+  @@index([configId, sortOrder])
+}
+
+model RecommendationStatusHistory {
+  id               String                @id @default(uuid()) @db.Uuid
+  recommendationId String                @db.Uuid
+  fromStatus       RecommendationStatus?
+  toStatus         RecommendationStatus
+  noteAr           String?
+  createdAt        DateTime              @default(now())
+  recommendation   Recommendation        @relation(fields: [recommendationId], references: [id], onDelete: Restrict)
+
+  @@index([recommendationId, createdAt])
 }
 
 model SpecialistProfile {

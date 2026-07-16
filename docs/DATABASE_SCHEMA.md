@@ -40,3 +40,17 @@ Migration `20260716173500_phase_5_admin_operations` adds catalog SEO/storage/ord
 # Phase 6 assessment update
 
 Adds template/rule/status-history models, outcome and question-type enums, conditional and safety metadata, progress and stale-save timestamps, typed numeric/date answers, submission idempotency, and immutable JSON snapshots.
+
+# Phase 7 recommendation update
+
+Migration `20260717003000_phase_7_recommendations` expands the guidance domain for deterministic product recommendations.
+
+New and updated schema areas:
+
+- `RecommendationConfig`, `RecommendationScoreWeight`, `ProductRecommendationRule`, and `RecommendationExplanationTemplate` provide versioned, publishable engine configuration.
+- `ProductIngredientRestriction` records hard ingredient-level restrictions used before ranking.
+- `Recommendation` now stores engine/config/product-data versions, immutable assessment/config/profile snapshots, idempotency keys, supersession links, no-result reasons, and status history.
+- `RecommendationItem` stores product/variant snapshots, rank, score, match level, role, score contributions, and controlled explanation text.
+- `RecommendationStatusHistory` records lifecycle changes without exposing sensitive assessment answers in routine logs.
+
+Phase 7 uses the existing Preview/Development PostgreSQL database only. The recommendation data is provisional and must be approved before any production promotion.

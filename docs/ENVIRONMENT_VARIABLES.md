@@ -17,3 +17,14 @@ Phase 4 introduces no new secrets. Currency, demo shipping, tax disabled state, 
 # Phase 6
 
 No new runtime secrets or external providers were introduced. Assessment data uses the existing Preview/Development `DATABASE_URL` only.
+
+# Phase 7
+
+No new environment variables, runtime secrets, external AI providers, payment providers, or storage providers were introduced.
+
+The deterministic recommendation engine uses the existing Preview/Development database variables:
+
+- `DATABASE_URL`
+- `DATABASE_URL_UNPOOLED`
+
+All recommendation configuration, scoring weights, product readiness data, and explanation templates are stored in PostgreSQL and managed through application code/admin screens. Production credentials remain untouched.
