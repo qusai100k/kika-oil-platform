@@ -63,3 +63,7 @@ Every phase is committed separately on `develop`, updates `CHANGELOG.md` and `RE
 # Sensitive assessment changes
 
 Question, consent, rule, and retention changes require a new version and owner/specialist/privacy review. Published versions are never edited in place.
+
+## Production database release policy
+
+Production releases that activate database-backed features require a dedicated Production database, Production-only secrets, migration verification, safe seed review, and smoke testing on the public Production domain. Development or Preview data must never be copied into Production.

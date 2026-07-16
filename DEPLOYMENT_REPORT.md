@@ -50,3 +50,14 @@ The following public routes were verified after deployment:
 - No production database is connected because the deployed prototype uses static storefront data only.
 - The current Vercel project was published with the official Vercel CLI. The GitHub repository is the source of record, but automatic deployment on every GitHub push requires installing the Vercel GitHub App for this repository.
 - `npm audit` reports moderate advisories inherited through the current Next.js/PostCSS and Prisma tooling dependency trees. No compatible non-breaking remediation is currently offered by npm; forced remediation would downgrade core frameworks and was therefore not applied.
+
+## v0.6.0 Production release update
+
+- **Release date:** 2026-07-17
+- **Scope:** Completed Phases 3 through 6 promoted from `release/v0.6.0-rc` to `main`.
+- **Backup branch:** `backup/pre-v0.6.0-production`
+- **Production database:** Neon PostgreSQL database `kika_oil_production`, separate from Development database `neondb`.
+- **Production environment variables:** `DATABASE_URL`, `DATABASE_URL_UNPOOLED`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `NEXT_PUBLIC_SITE_URL`.
+- **Seeded categories:** required catalog products/variants, provisional commerce setting, provisional assessment template/questions/rules.
+- **Not copied:** Development users, QA orders, carts, addresses, submitted assessments, admin passwords, coupons, and audit history.
+- **Phase 7 status:** Not included in Production.

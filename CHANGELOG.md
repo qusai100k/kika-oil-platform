@@ -33,6 +33,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed assessment-template duplication so copied options belong to copied questions, and increased the duplication transaction timeout for realistic Preview latency.
 - Verified and documented referral, correction, resume, cross-user IDOR, stale-tab, sensitive-view audit, and `ORDER_MANAGER` denial paths.
 
+### Released
+
+- Promoted the approved `release/v0.6.0-rc` branch to Production with a dedicated Production database and Production-only secrets.
+
 ## [0.5.0] - 2026-07-16
 
 ### Added

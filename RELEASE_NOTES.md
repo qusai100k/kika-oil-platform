@@ -5,7 +5,8 @@ These notes summarize the business-facing outcome of each prototype release. The
 ## v0.6.0 — Structured Skin Assessment
 
 Released: 2026-07-16
-Status: Develop Preview only.
+Production promotion: 2026-07-17.
+Status: Released to the public Production URL with a dedicated Production database.
 
 Customers can consent, create and resume a structured draft, review answers, submit an immutable record, and receive a cautious deterministic state. No product is recommended. Questions and safety rules are development drafts awaiting owner, specialist, privacy, and legal approval. AI, diagnosis, booking, and Phase 7 are absent.
 
